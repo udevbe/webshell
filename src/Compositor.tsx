@@ -19,11 +19,22 @@ function initializeCanvas(session: CompositorSession, canvas: HTMLCanvasElement,
   canvas.onblur = () => session.userShell.actions.input.blur()
 
   //wire up dom input events to compositor input events
-  canvas.onpointermove = (event: PointerEvent) => {
+  const pointerMoveHandler = (event: PointerEvent) => {
     event.stopPropagation()
     event.preventDefault()
     session.userShell.actions.input.pointerMove(createButtonEventFromMouseEvent(event, false, sceneId))
   }
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (canvas.onpointerrawupdate) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    canvas.onpointerrawupdate = pointerMoveHandler
+  } else {
+    canvas.onpointermove = pointerMoveHandler
+  }
+
   canvas.onpointerdown = (event: PointerEvent) => {
     event.stopPropagation()
     event.preventDefault()
