@@ -274,7 +274,7 @@ export const App = ({
                     mr={2}
                     pr={1}
                     pl={1}
-                    width={170}
+                    width={186}
                     height={48}
                     style={{
                       display: 'flex',
@@ -349,7 +349,7 @@ export const App = ({
                     mr={2}
                     pr={1}
                     pl={1}
-                    width={170}
+                    width={186}
                     height={48}
                     style={{
                       display: 'flex',
