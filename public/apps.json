@@ -1,0 +1,14 @@
+{
+  "remote-gtk3-demo": {
+    "id": "remote-gtk3-demo",
+    "icon": "icon.svg",
+    "title": "GTK3 Demo",
+    "url": "wss://app-endpoint.greenfield.app?launch=remote-gtk3-demo"
+  },
+  "remote-kwrite": {
+    "id": "remote-kwrite",
+    "icon": "icon.svg",
+    "title": "KWrite",
+    "url": "wss://app-endpoint.greenfield.app?launch=remote-kwrite"
+  }
+}
