@@ -16,7 +16,7 @@ services:
       dockerfile: ./Dockerfile
     read_only: true
     volumes:
-      - upload:/upload:rw
+      - upload:/usr/src/app/upload:ro
       - tmp:/tmp
     ports:
       - 8081:8081

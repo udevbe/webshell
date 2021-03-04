@@ -1,5 +1,8 @@
+# About
+A simple webshell implementation of the [Greenfield cloud compositor](https://github.com/udevbe/greenfield).
+
 # Install
-`yarn install`
+- `yarn install`
 
 # Build
 - Make sure you install first.
@@ -9,16 +12,16 @@
 - Make sure you install first
 - From the root of this repo: `yarn start`
 
-# Build docker
-- Make sure you build first.
-- From the root of this repo: `docker build -f docker/ngix/Dockerfile . -t webshell`
+# Run the whole thing in docker
+- Make sure you completed the build step first.
+- In the `docker` directory run `docker-compose up`.
+  
 
-# Run docker
-- Make sure you build docker first.
-- `docker run -p80:80 webshell`
-- Go to `http://localhost`
-- Credentials see `docker/ngix` README.md
+Login credentials are:
+- username: `test`
+- password: `test`
 
 # Configuring available apps:
 - Adjust `/public/apps.json` to change the launch id, name & icon location of apps displayed in the webshell.
+- Adjust the launch ids you previously so they have a match in `docker/app-endpoint-server/config.json5`.  
 - Adjust `/public/apps/<app-id>/icon.svg` to change the icon of apps displayed in the webshell.
