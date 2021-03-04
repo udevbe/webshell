@@ -25,3 +25,4 @@ Login credentials are:
 - Adjust `/public/apps.json` to change the launch id, name & icon location of apps displayed in the webshell.
 - Adjust the launch ids you previously so they have a match in `docker/app-endpoint-server/config.json5`.  
 - Adjust `/public/apps/<app-id>/icon.svg` to change the icon of apps displayed in the webshell.
+- Rebuild.
