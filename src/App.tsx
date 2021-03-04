@@ -27,7 +27,7 @@ import {
   createCompositorRemoteAppLauncher,
   createCompositorRemoteSocket,
 } from 'greenfield-compositor'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Client } from 'westfield-runtime-server'
 import { CompositorScene } from './Compositor'
 import Logo from './Logo'
@@ -114,6 +114,37 @@ export const App = ({
   }
 
   const closeActiveApp = () => activeApp?.client?.close()
+
+  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
+    if (files === null) {
+      return
+    }
+    for (const file of files) {
+      const reader = new FileReader()
+      const xhr = new XMLHttpRequest()
+      xhr.upload.addEventListener(
+        'progress',
+        function (e) {
+          if (e.lengthComputable) {
+            const percentage = Math.round((e.loaded * 100) / e.total)
+            console.log(`Uploading ${file.name} - ${percentage}`)
+          }
+        },
+        false,
+      )
+
+      xhr.open('POST', `http://localhost/upload`)
+      xhr.overrideMimeType('application/octet-stream')
+      xhr.setRequestHeader('X-ORIG-FILE-NAME', file.name)
+      reader.onload = (evt) => {
+        if (evt.target) {
+          xhr.send(evt.target.result)
+        }
+      }
+      reader.readAsArrayBuffer(file)
+    }
+  }
 
   return (
     <CssBaseline>
@@ -221,6 +252,10 @@ export const App = ({
                       >
                         <ClickAwayListener onClickAway={handleActiveAppMenuClose}>
                           <MenuList dense autoFocusItem={activeAppMenuOpen} id='menu-list-grow'>
+                            <MenuItem dense component='label'>
+                              Upload File
+                              <input type='file' hidden multiple onChange={handleFileUpload} />
+                            </MenuItem>
                             <MenuItem
                               dense
                               onClick={(event) => {
