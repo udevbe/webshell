@@ -1,0 +1,35 @@
+version: "3.4"
+services:
+  webshell:
+    build:
+      context: ..
+      dockerfile: ./docker/webshell/Dockerfile
+    ports:
+      - 80:80
+    networks:
+      - vpn-localhost
+    volumes:
+      - upload:/upload:rw
+  app-endpoint-server:
+    build:
+      context: ./app-endpoint-server
+      dockerfile: ./Dockerfile
+    read_only: true
+    volumes:
+      - upload:/upload:rw
+      - tmp:/tmp
+    ports:
+      - 8081:8081
+    networks:
+      - vpn-localhost
+volumes:
+  upload:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+  tmp:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+networks:
+  vpn-localhost:
