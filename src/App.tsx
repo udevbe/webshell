@@ -3,9 +3,13 @@ import {
   Button,
   ClickAwayListener,
   CssBaseline,
+  Dialog,
+  DialogActions,
+  DialogContent,
   Divider,
   Drawer,
   Grow,
+  LinearProgress,
   List,
   ListItem,
   ListItemIcon,
@@ -14,6 +18,7 @@ import {
   MenuList,
   Paper,
   Popper,
+  Snackbar,
   Typography,
 } from '@material-ui/core'
 import AppBar from '@material-ui/core/AppBar'
@@ -21,6 +26,7 @@ import IconButton from '@material-ui/core/IconButton'
 import { makeStyles } from '@material-ui/core/styles'
 import Toolbar from '@material-ui/core/Toolbar'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
+import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 import MenuIcon from '@material-ui/icons/Menu'
 import {
   CompositorSession,
@@ -31,8 +37,10 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Client } from 'westfield-runtime-server'
 import { CompositorScene } from './Compositor'
 import Logo from './Logo'
+import MuiAlert from '@material-ui/lab/Alert'
 
 export type RemoteApps = Record<string, { id: string; icon: string; title: string; url: string; client?: Client }>
+type Upload = { fileName: string; progress: number; xhr: XMLHttpRequest }
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
@@ -106,44 +114,82 @@ export const App = ({
   }
 
   const activeClient = (clientId: string) => {
-    const result = Object.entries(remoteApps).find(([key, value]) => value.client?.id === clientId)
+    const result = Object.entries(remoteApps).find(([, value]) => value.client?.id === clientId)
     if (result) {
-      const [appId, app] = result
+      const [, app] = result
       setActiveApp(app)
     }
   }
 
   const closeActiveApp = () => activeApp?.client?.close()
 
+  const [showDownloadSuccess, setShowDownloadSuccess] = useState(false)
+  const handleShowDownloadSuccessClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setShowDownloadSuccess(false)
+  }
+
+  const [fileUploads, setFileUploads] = useState<Upload[]>([])
+
   const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
     if (files === null) {
       return
     }
-    for (const file of files) {
+    const newFileUploads: Upload[] = []
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+
+      const fileUpload: Upload = {
+        fileName: file.name,
+        progress: 0,
+        xhr: new XMLHttpRequest(),
+      }
+
       const reader = new FileReader()
-      const xhr = new XMLHttpRequest()
-      xhr.upload.addEventListener(
+      fileUpload.xhr.upload.addEventListener(
         'progress',
         function (e) {
           if (e.lengthComputable) {
-            const percentage = Math.round((e.loaded * 100) / e.total)
-            console.log(`Uploading ${file.name} - ${percentage}`)
+            fileUpload.progress = Math.round((e.loaded * 100) / e.total)
           }
         },
         false,
       )
 
-      xhr.open('POST', `http://localhost/upload`)
-      xhr.overrideMimeType('application/octet-stream')
-      xhr.setRequestHeader('X-ORIG-FILE-NAME', file.name)
+      fileUpload.xhr.onreadystatechange = () => {
+        if (fileUpload.xhr.readyState === 4) {
+          // Upload done
+          const busyUploads = fileUploads.filter((busyFileUpload) => busyFileUpload.fileName !== fileUpload.fileName)
+          setFileUploads(busyUploads)
+          if (busyUploads.length === 0) {
+            setShowDownloadSuccess(true)
+          }
+        }
+      }
+
+      fileUpload.xhr.open('POST', `http://localhost/upload`)
+      fileUpload.xhr.overrideMimeType('application/octet-stream')
+      fileUpload.xhr.setRequestHeader('X-ORIG-FILE-NAME', file.name)
       reader.onload = (evt) => {
         if (evt.target) {
-          xhr.send(evt.target.result)
+          fileUpload.xhr.send(evt.target.result)
         }
       }
       reader.readAsArrayBuffer(file)
+
+      newFileUploads[i] = fileUpload
     }
+
+    setFileUploads(newFileUploads)
+  }
+
+  const handleUploadCancel = () => {
+    fileUploads.forEach((fileUpload) => fileUpload.xhr.abort())
+    setFileUploads([])
   }
 
   return (
@@ -193,6 +239,29 @@ export const App = ({
                 })}
               </List>
             </Drawer>
+            <input type='file' hidden multiple onChange={handleFileUpload} id='upload-input' />
+            <label htmlFor='upload-input'>
+              <Button size='small' variant='outlined' startIcon={<CloudUploadIcon />} component='span'>
+                Upload File
+              </Button>
+            </label>
+            <Dialog open={fileUploads.length > 0}>
+              <DialogContent>
+                {fileUploads.map((fileUpload) => {
+                  return (
+                    <div key={fileUpload.fileName}>
+                      <Typography>{fileUpload.fileName}</Typography>
+                      <LinearProgress style={{ width: 200 }} variant='determinate' value={fileUpload.progress} />
+                    </div>
+                  )
+                })}
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleUploadCancel} color='primary' autoFocus>
+                  cancel
+                </Button>
+              </DialogActions>
+            </Dialog>
             {activeApp ? (
               <Box
                 mt={0.25}
@@ -252,10 +321,6 @@ export const App = ({
                       >
                         <ClickAwayListener onClickAway={handleActiveAppMenuClose}>
                           <MenuList dense autoFocusItem={activeAppMenuOpen} id='menu-list-grow'>
-                            <MenuItem dense component='label'>
-                              Upload File
-                              <input type='file' hidden multiple onChange={handleFileUpload} />
-                            </MenuItem>
                             <MenuItem
                               dense
                               onClick={(event) => {
@@ -302,6 +367,11 @@ export const App = ({
           </Toolbar>
         </AppBar>
         <CompositorScene compositorSession={compositorSession} onActiveClient={activeClient} />
+        <Snackbar open={showDownloadSuccess} autoHideDuration={6000} onClose={handleShowDownloadSuccessClose}>
+          <MuiAlert elevation={6} variant='filled' onClose={handleShowDownloadSuccessClose} severity='success'>
+            Upload success.
+          </MuiAlert>
+        </Snackbar>
       </div>
     </CssBaseline>
   )
