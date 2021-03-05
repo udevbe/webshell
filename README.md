@@ -15,7 +15,7 @@ A simple webshell implementation of the [Greenfield cloud compositor](https://gi
 # Run the whole thing in docker
 - Make sure you completed the build step first.
 - In the `docker` directory run `docker-compose up`.
-  
+- Go to `http://localhost`
 
 Login credentials are:
 - username: `test`
