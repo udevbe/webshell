@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import React, { EventHandler, FormEventHandler, MouseEventHandler, useState } from 'react'
+import React, { FormEventHandler, MouseEventHandler, useState } from 'react'
 
 const SUPABASE_URL = 'http://localhost:8000'
 const SUPABASE_KEY =
