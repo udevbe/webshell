@@ -26,17 +26,19 @@ import { makeStyles } from '@material-ui/core/styles'
 import Toolbar from '@material-ui/core/Toolbar'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import MenuIcon from '@material-ui/icons/Menu'
 import {
   CompositorSession,
   createCompositorRemoteAppLauncher,
   createCompositorRemoteSocket,
 } from 'greenfield-compositor'
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import React, { ChangeEvent, MouseEventHandler, useEffect, useRef, useState } from 'react'
 import { Client } from 'westfield-runtime-server'
 import { CompositorScene } from './Compositor'
 import Logo from './Logo'
 import MuiAlert from '@material-ui/lab/Alert'
+import { useSupabase } from './SupaBaseContext'
 
 export type RemoteApps = Record<string, { id: string; icon: string; title: string; url: string; client?: Client }>
 type Upload = { fileName: string; progress: number; xhr: XMLHttpRequest }
@@ -60,8 +62,8 @@ export const App = ({
   compositorSession: CompositorSession
   remoteApps: RemoteApps
 }) => {
+  const { supabase } = useSupabase()
   const classes = useStyles()
-
   const [activeApp, setActiveApp] = useState<RemoteApps[keyof RemoteApps] | null>(null)
   const activeAppRef = useRef(activeApp)
   useEffect(() => {
@@ -189,6 +191,11 @@ export const App = ({
   const handleUploadCancel = () => {
     fileUploads.forEach((fileUpload) => fileUpload.xhr.abort())
     setFileUploads([])
+  }
+
+  const logout: MouseEventHandler<HTMLButtonElement> = (event) => {
+    event.preventDefault()
+    supabase.auth.signOut().catch((err) => alert(err.message))
   }
 
   return (
@@ -362,6 +369,9 @@ export const App = ({
               alignItems: 'center',
             }}
           />
+          <IconButton onClick={logout}>
+            <ExitToAppIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <CompositorScene compositorSession={compositorSession} onActiveClient={activeClient} />

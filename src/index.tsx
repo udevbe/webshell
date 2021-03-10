@@ -3,7 +3,7 @@ import { createCompositorSession, initWasm } from 'greenfield-compositor'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { App, RemoteApps } from './App'
-import { Auth } from './AuthScreen'
+import { Auth } from './Auth'
 import { SupabaseContextProvider } from './SupaBaseContext'
 
 async function main() {
