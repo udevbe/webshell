@@ -1,8 +1,10 @@
+import { CssBaseline } from '@material-ui/core'
 import { createCompositorSession, initWasm } from 'greenfield-compositor'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { App, RemoteApps } from './App'
-import { Auth } from './Auth'
+import { Auth } from './AuthScreen'
+import { SupabaseContextProvider } from './SupaBaseContext'
 
 async function main() {
   const remoteAppsResponse = await fetch('apps.json')
@@ -13,8 +15,13 @@ async function main() {
 
   ReactDOM.render(
     <React.StrictMode>
-      <Auth />
-      <App compositorSession={compositorSession} remoteApps={remoteApps} />
+      <SupabaseContextProvider>
+        <CssBaseline>
+          <Auth>
+            <App compositorSession={compositorSession} remoteApps={remoteApps} />
+          </Auth>
+        </CssBaseline>
+      </SupabaseContextProvider>
     </React.StrictMode>,
     document.getElementById('root'),
   )

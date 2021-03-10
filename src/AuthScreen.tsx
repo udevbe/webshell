@@ -1,13 +1,17 @@
-import { createClient } from '@supabase/supabase-js'
-import React, { FormEventHandler, MouseEventHandler, useState } from 'react'
+import React, { FormEventHandler, MouseEventHandler, ReactElement, useState } from 'react'
+import { useSupabase } from './SupaBaseContext'
 
-const SUPABASE_URL = 'http://localhost:8000'
-const SUPABASE_KEY =
-  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTYwMzk2ODgzNCwiZXhwIjoyNTUwNjUzNjM0LCJhdWQiOiIiLCJzdWIiOiIiLCJSb2xlIjoicG9zdGdyZXMifQ.kdRWxJKxqgFOlx4BZQj-GIIOEeMILqUvdHMh8ebcn8M'
+export const Auth = (props: { children: ReactElement }) => {
+  const { user } = useSupabase()
+  if (user) {
+    return props.children
+  } else {
+    return <AuthScreen />
+  }
+}
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
-
-export const Auth = () => {
+const AuthScreen = () => {
+  const { supabase } = useSupabase()
   const [accessToken, setAccessToken] = useState('')
   const [refreshToken, setRefreshToken] = useState('')
 
@@ -34,7 +38,7 @@ export const Auth = () => {
         alert('Logged in as ' + response.user.email)
       })
       .catch((err) => {
-        alert(err.response.text)
+        alert(err.message)
       })
   }
 
@@ -62,7 +66,7 @@ export const Auth = () => {
         alert('Logged in as ' + response.user.email)
       })
       .catch((err) => {
-        alert(err.response.text)
+        alert(err.message)
       })
   }
 
