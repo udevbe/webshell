@@ -2,7 +2,7 @@ import { CssBaseline } from '@material-ui/core'
 import { createCompositorSession, initWasm } from 'greenfield-compositor'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { App, RemoteApps } from './App'
+import { Shell, RemoteApps } from './Shell'
 import { Auth } from './Auth'
 import { SupabaseContextProvider } from './SupaBaseContext'
 
@@ -18,7 +18,7 @@ async function main() {
       <SupabaseContextProvider>
         <CssBaseline>
           <Auth>
-            <App compositorSession={compositorSession} remoteApps={remoteApps} />
+            <Shell compositorSession={compositorSession} remoteApps={remoteApps} />
           </Auth>
         </CssBaseline>
       </SupabaseContextProvider>

@@ -1,6 +1,6 @@
 
 
--- Set up reatime
+-- Set up realtime
 create publication supabase_realtime for all tables;
 
 -- Extension namespacing
