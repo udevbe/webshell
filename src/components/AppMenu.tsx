@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import React, { useEffect, useRef, useState } from 'react'
-import { RemoteApps } from './Shell'
+import { RemoteApps } from '../types/webshell'
 
 export const AppMenu = ({ activeApp }: { activeApp: RemoteApps[keyof RemoteApps] }) => {
   const activeAppButtonAnchorRef = useRef<HTMLButtonElement>(null)
@@ -43,7 +43,6 @@ export const AppMenu = ({ activeApp }: { activeApp: RemoteApps[keyof RemoteApps]
         ref={activeAppButtonAnchorRef}
         onClick={handleActiveAppMenuToggle}
         fullWidth
-        variant='outlined'
         size='small'
         startIcon={
           <img src={`/apps/${activeApp.id}/${activeApp.icon}`} style={{ width: 24, height: 24, marginRight: 8 }} />

@@ -7,16 +7,14 @@ import {
   createCompositorRemoteSocket,
 } from 'greenfield-compositor'
 import React, { useEffect, useRef, useState } from 'react'
-import { Client } from 'westfield-runtime-server'
-import { AppMenu } from './AppMenu'
-import { CompositorScene } from './Compositor'
-import { FileUpload } from './FileUpload'
-import { ShellDrawer } from './ShellDrawer'
-import { UserMenu } from './UserMenu'
+import { AppMenu } from '../components/AppMenu'
+import { CompositorScene } from '../components/Compositor'
+import { FileUpload } from '../components/FileUpload'
+import { ShellDrawer } from '../components/ShellDrawer'
+import { RemoteApps } from '../types/webshell'
+import { UserMenu } from '../components/UserMenu'
 
-export type RemoteApps = Record<string, { id: string; icon: string; title: string; url: string; client?: Client }>
-
-export const Shell = ({
+export const WebShellPage = ({
   compositorSession,
   remoteApps,
 }: {

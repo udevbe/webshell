@@ -48,6 +48,7 @@ export const FileUpload = () => {
       )
 
       fileUpload.xhr.onreadystatechange = () => {
+        // TODO check for upload failures
         if (fileUpload.xhr.readyState === 4) {
           // Upload done
           const busyUploads = fileUploads.filter((busyFileUpload) => busyFileUpload.fileName !== fileUpload.fileName)
@@ -78,7 +79,7 @@ export const FileUpload = () => {
     <>
       <input type='file' hidden multiple onChange={handleFileUpload} id='upload-input' />
       <label htmlFor='upload-input'>
-        <Button size='small' variant='outlined' startIcon={<CloudUploadIcon />} component='span'>
+        <Button size='small' startIcon={<CloudUploadIcon />} component='span'>
           Upload File
         </Button>
       </label>

@@ -11,7 +11,6 @@ if (supabaseURL === undefined || supabaseKey === undefined) {
 export type NavigationType = 'invite' | 'recovery' | 'signup'
 
 export interface SupabaseContext {
-  user: User | null
   session: Session | null
   authChange: AuthChangeEvent | null
   navigationType: NavigationType | null
@@ -26,7 +25,6 @@ console.log(`navigation type: ${navigationType}`)
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const supabaseContext = createContext<SupabaseContext>({
-  user: null,
   session: null,
   authChange: null,
   navigationType,
@@ -35,16 +33,13 @@ const supabaseContext = createContext<SupabaseContext>({
 
 export const SupabaseContextProvider = (props: { children: ReactElement }) => {
   const [session, setSession] = useState<Session | null>(null)
-  const [user, setUser] = useState<User | null>(null)
   const [authChange, setAuthChange] = useState<AuthChangeEvent | null>(null)
 
   useEffect(() => {
     const session = supabase.auth.session()
     setSession(session)
-    setUser(session?.user ?? null)
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session)
-      setUser(session?.user ?? null)
       setAuthChange(event)
     })
 
@@ -55,7 +50,6 @@ export const SupabaseContextProvider = (props: { children: ReactElement }) => {
 
   const value = {
     session,
-    user,
     authChange,
     navigationType,
     supabase,

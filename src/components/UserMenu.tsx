@@ -15,11 +15,12 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import React, { MouseEventHandler, useEffect, useRef, useState } from 'react'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
-import { useSupabase } from './SupaBaseContext'
+import { useSupabase } from '../SupaBaseContext'
+import { useHistory } from 'react-router-dom'
 
 export const UserMenu = () => {
   const { supabase } = useSupabase()
-
+  const history = useHistory()
   const userButtonAnchorRef = useRef<HTMLButtonElement>(null)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const prevUserMenuOpen = useRef(userMenuOpen)
@@ -46,7 +47,7 @@ export const UserMenu = () => {
   }
 
   const changePassword: MouseEventHandler<HTMLLIElement | HTMLAnchorElement> = () => {
-    // TODO navigate
+    history.push('/changepassword')
   }
 
   const handleUserMenuToggle = () => setUserMenuOpen((prevOpen) => !prevOpen)
@@ -57,7 +58,6 @@ export const UserMenu = () => {
         ref={userButtonAnchorRef}
         onClick={handleUserMenuToggle}
         fullWidth
-        variant='outlined'
         size='small'
         startIcon={<AccountCircleIcon />}
         endIcon={<ArrowDropDownIcon />}
@@ -81,9 +81,11 @@ export const UserMenu = () => {
             style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
           >
             <Paper
-              style={{
-                width: 170,
-              }}
+              style={
+                {
+                  // width: 170,
+                }
+              }
               elevation={3}
             >
               <ClickAwayListener onClickAway={handleUserMenuClose}>

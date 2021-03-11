@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import MenuIcon from '@material-ui/icons/Menu'
 import React, { useState } from 'react'
 import Logo from './Logo'
-import { RemoteApps } from './Shell'
+import { RemoteApps } from '../types/webshell'
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
