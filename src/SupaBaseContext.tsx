@@ -8,12 +8,9 @@ if (supabaseURL === undefined || supabaseKey === undefined) {
   throw new Error('Bug. supbase url and key should be defined')
 }
 
-export type NavigationType = 'invite' | 'recovery' | 'signup'
-
 export interface SupabaseContext {
   session: Session | null
   authChange: AuthChangeEvent | null
-  navigationType: NavigationType | null
   supabase: SupabaseClient
 }
 
@@ -27,7 +24,6 @@ console.log(`navigation type: ${navigationType}`)
 const supabaseContext = createContext<SupabaseContext>({
   session: null,
   authChange: null,
-  navigationType,
   supabase,
 })
 
@@ -38,7 +34,7 @@ export const SupabaseContextProvider = (props: { children: ReactElement }) => {
   useEffect(() => {
     const session = supabase.auth.session()
     setSession(session)
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session)
       setAuthChange(event)
     })
@@ -51,7 +47,6 @@ export const SupabaseContextProvider = (props: { children: ReactElement }) => {
   const value = {
     session,
     authChange,
-    navigationType,
     supabase,
   }
   return <supabaseContext.Provider value={value} {...props} />

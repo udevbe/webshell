@@ -4,19 +4,9 @@ import { Location } from 'history'
 import { useSupabase } from './SupaBaseContext'
 
 const PrivateRouteRender = ({ children, location }: { children: ReactElement; location: Location }) => {
-  const { authChange, supabase } = useSupabase()
+  const { supabase } = useSupabase()
 
   if (supabase.auth.user()) {
-    if (authChange === 'PASSWORD_RECOVERY') {
-      return (
-        <Redirect
-          to={{
-            pathname: '/changepassword',
-            state: { from: location },
-          }}
-        />
-      )
-    }
     return children
   } else {
     return (
