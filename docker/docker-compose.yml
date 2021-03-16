@@ -10,6 +10,8 @@ services:
       - tmp:/tmp
     ports:
       - 8081:8081
+    environment:
+      HOME: '/home/node'
   webshell:
     build:
       context: ..
