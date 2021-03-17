@@ -10,6 +10,25 @@ import { PrivateRoute } from './PrivateRoute'
 import { SupabaseContextProvider } from './SupaBaseContext'
 import { RemoteApps } from './types/webshell'
 
+const Pages = ({ compositorSession, remoteApps }: { compositorSession: CompositorSession; remoteApps: RemoteApps }) => {
+  return (
+    <Switch>
+      <Route path='/login'>
+        <LoginPage />
+      </Route>
+      <Route path='/resetpassword'>
+        <ResetPasswordPage />
+      </Route>
+      <PrivateRoute path='/changepassword'>
+        <ChangePasswordPage />
+      </PrivateRoute>
+      <PrivateRoute path='/'>
+        <WebShellPage compositorSession={compositorSession} remoteApps={remoteApps} />
+      </PrivateRoute>
+    </Switch>
+  )
+}
+
 export const App = ({
   compositorSession,
   remoteApps,
@@ -22,20 +41,7 @@ export const App = ({
       <SupabaseContextProvider>
         <CssBaseline>
           <BrowserRouter>
-            <Switch>
-              <Route path='/login'>
-                <LoginPage />
-              </Route>
-              <Route path='/resetpassword'>
-                <ResetPasswordPage />
-              </Route>
-              <PrivateRoute path='/changepassword'>
-                <ChangePasswordPage />
-              </PrivateRoute>
-              <PrivateRoute path='/'>
-                <WebShellPage compositorSession={compositorSession} remoteApps={remoteApps} />
-              </PrivateRoute>
-            </Switch>
+            <Pages compositorSession={compositorSession} remoteApps={remoteApps} />
           </BrowserRouter>
         </CssBaseline>
       </SupabaseContextProvider>
