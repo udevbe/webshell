@@ -1,11 +1,13 @@
 import React, { useEffect, useState, createContext, useContext, ReactElement } from 'react'
-import { SupabaseClient, Session, User, createClient, AuthChangeEvent } from '@supabase/supabase-js'
+import { SupabaseClient, Session, createClient, AuthChangeEvent } from '@supabase/supabase-js'
 
-const supabaseURL = process.env['REACT_APP_SUPABASE_URL']
-const supabaseKey = process.env['REACT_APP_SUPABASE_KEY']
+let supabaseURL = process.env['REACT_APP_SUPABASE_URL']
+let supabaseKey = process.env['REACT_APP_SUPABASE_KEY']
 
 if (supabaseURL === undefined || supabaseKey === undefined) {
-  throw new Error('Bug. supbase url and key should be defined')
+  console.error('supabase url and key should be defined')
+  supabaseURL = 'supabase url should be defined'
+  supabaseKey = 'supabase key should be defined'
 }
 
 export interface SupabaseContext {

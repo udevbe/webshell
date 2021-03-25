@@ -1,18 +1,100 @@
-import { Box, Typography } from '@material-ui/core'
+import { Box, IconButton, Typography } from '@material-ui/core'
+import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import {
   CompositorSession,
+  CompositorSurface,
+  createAxisEventFromWheelEvent,
+  createButtonEventFromMouseEvent,
   createCompositorRemoteAppLauncher,
   createCompositorRemoteSocket,
+  createKeyEventFromKeyboardEvent,
 } from 'greenfield-compositor'
 import React, { useEffect, useRef, useState } from 'react'
 import { AppMenu } from '../components/AppMenu'
-import { CompositorScene } from '../components/Compositor'
+import { Scene } from '../components/Compositor'
 import { FileUpload } from '../components/FileUpload'
+import { Settings } from '../components/Settings'
 import { ShellDrawer } from '../components/ShellDrawer'
 import { RemoteApps } from '../types/webshell'
-import { UserMenu } from '../components/UserMenu'
+
+function initializeCanvas(session: CompositorSession, canvas: HTMLCanvasElement, sceneId: string) {
+  // register canvas with compositor session
+  session.userShell.actions.initScene(sceneId, canvas)
+
+  // make sure the canvas has focus and receives input inputs
+  canvas.onmouseover = () => canvas.focus()
+  canvas.tabIndex = 1
+  // don't show browser context menu on right click
+  canvas.oncontextmenu = (event: MouseEvent) => event.preventDefault()
+  canvas.onblur = () => session.userShell.actions.input.blur()
+
+  //wire up dom input events to compositor input events
+  const pointerMoveHandler = (event: PointerEvent) => {
+    event.stopPropagation()
+    event.preventDefault()
+    session.userShell.actions.input.pointerMove(createButtonEventFromMouseEvent(event, false, sceneId))
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (canvas.onpointerrawupdate) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    canvas.onpointerrawupdate = pointerMoveHandler
+  } else {
+    canvas.onpointermove = pointerMoveHandler
+  }
+
+  canvas.onpointerdown = (event: PointerEvent) => {
+    event.stopPropagation()
+    event.preventDefault()
+    canvas.setPointerCapture(event.pointerId)
+    session.userShell.actions.input.buttonDown(createButtonEventFromMouseEvent(event, false, sceneId))
+  }
+  canvas.onpointerup = (event: PointerEvent) => {
+    event.stopPropagation()
+    event.preventDefault()
+    session.userShell.actions.input.buttonUp(createButtonEventFromMouseEvent(event, true, sceneId))
+    canvas.releasePointerCapture(event.pointerId)
+  }
+  canvas.onwheel = (event: WheelEvent) => {
+    event.stopPropagation()
+    event.preventDefault()
+    session.userShell.actions.input.axis(createAxisEventFromWheelEvent(event, sceneId))
+  }
+  canvas.onkeydown = (event: KeyboardEvent) => {
+    event.stopPropagation()
+    event.preventDefault()
+    const keyEvent = createKeyEventFromKeyboardEvent(event, true)
+    if (keyEvent) {
+      session.userShell.actions.input.key(keyEvent)
+    }
+  }
+  canvas.onkeyup = (event: KeyboardEvent) => {
+    event.stopPropagation()
+    event.preventDefault()
+    const keyEvent = createKeyEventFromKeyboardEvent(event, false)
+    if (keyEvent) {
+      session.userShell.actions.input.key(keyEvent)
+    }
+  }
+}
+
+function linkUserShellEvents(session: CompositorSession, activeClient: (clientId: string) => void) {
+  const userShell = session.userShell
+
+  userShell.events.notify = (variant: string, message: string) => window.alert(message)
+  userShell.events.createUserSurface = (compositorSurface: CompositorSurface) => {
+    userShell.actions.createView(compositorSurface, 'myOutputId')
+  }
+  userShell.events.updateUserSurface = (compositorSurface, state) => {
+    if (state.active) {
+      activeClient(compositorSurface.clientId)
+    }
+  }
+}
 
 export const WebShellPage = ({
   compositorSession,
@@ -21,7 +103,9 @@ export const WebShellPage = ({
   compositorSession: CompositorSession
   remoteApps: RemoteApps
 }) => {
+  const canvasParent = useRef<HTMLDivElement>(null)
   const [activeApp, setActiveApp] = useState<RemoteApps[keyof RemoteApps] | null>(null)
+  const [showSettings, setShowSettings] = useState<boolean>(false)
   const activeAppRef = useRef(activeApp)
   useEffect(() => {
     activeAppRef.current = activeApp
@@ -56,8 +140,28 @@ export const WebShellPage = ({
     }
   }
 
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+
+  const getSceneCanvas = () => {
+    const instance = canvasRef.current
+    if (instance !== null) {
+      return instance
+    }
+    // Lazy init
+    const canvas = document.createElement('canvas')
+    canvas.style.flex = '1'
+    canvas.style.outline = '0'
+    initializeCanvas(compositorSession, canvas, 'myOutputId')
+    linkUserShellEvents(compositorSession, activeClient)
+    compositorSession.globals.register()
+
+    canvasRef.current = canvas
+    return canvas
+  }
+
   return (
     <div
+      ref={canvasParent}
       style={{
         height: '100vh',
         display: 'flex',
@@ -68,52 +172,64 @@ export const WebShellPage = ({
     >
       <AppBar position='static' color='default' variant='outlined'>
         <Toolbar variant='dense'>
-          <ShellDrawer launchApp={launchApp} remoteApps={remoteApps} />
-          <FileUpload />
-          <Box
-            mt={0.25}
-            mr={2}
-            pr={1}
-            pl={1}
-            width={186}
-            height={48}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            {activeApp ? (
-              <AppMenu activeApp={activeApp} />
-            ) : (
-              <Typography color='textSecondary' variant='caption'>
-                No Application active
-              </Typography>
-            )}
-          </Box>
-          <Box
-            mr={4}
-            display='flex'
-            flex={1}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          />
-          <Box
-            mt={0.25}
-            pr={1}
-            pl={1}
-            height={48}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <UserMenu />
-          </Box>
+          <ShellDrawer launchApp={launchApp} remoteApps={remoteApps} showSettings={() => setShowSettings(true)} />
+          {showSettings ? (
+            <IconButton onClick={() => setShowSettings(false)}>
+              <ArrowBackIcon />
+            </IconButton>
+          ) : (
+            <>
+              <FileUpload />
+              <Box
+                mt={0.25}
+                mr={2}
+                pr={1}
+                pl={1}
+                width={186}
+                height={48}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                {activeApp ? (
+                  <AppMenu activeApp={activeApp} />
+                ) : (
+                  <Typography color='textSecondary' variant='caption'>
+                    No Application active
+                  </Typography>
+                )}
+              </Box>
+              <Box
+                mr={4}
+                display='flex'
+                flex={1}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              />
+              {/*<Box*/}
+              {/*  mt={0.25}*/}
+              {/*  pr={1}*/}
+              {/*  pl={1}*/}
+              {/*  height={48}*/}
+              {/*  style={{*/}
+              {/*    display: 'flex',*/}
+              {/*    alignItems: 'center',*/}
+              {/*  }}*/}
+              {/*>*/}
+              {/*  <UserMenu />*/}
+              {/*</Box>*/}
+            </>
+          )}
         </Toolbar>
       </AppBar>
-      <CompositorScene compositorSession={compositorSession} onActiveClient={activeClient} />
+      {showSettings ? (
+        <Settings compositorSession={compositorSession} />
+      ) : (
+        <Scene parentRef={canvasParent} getCanvas={getSceneCanvas} />
+      )}
     </div>
   )
 }

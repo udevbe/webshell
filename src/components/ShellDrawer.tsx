@@ -1,8 +1,10 @@
 import { Box, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core'
+import SettingsIcon from '@material-ui/icons/Settings'
 import IconButton from '@material-ui/core/IconButton'
 import { makeStyles } from '@material-ui/core/styles'
 import MenuIcon from '@material-ui/icons/Menu'
 import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import Logo from './Logo'
 import { RemoteApps } from '../types/webshell'
 
@@ -21,9 +23,11 @@ const useStyles = makeStyles((theme) => ({
 export const ShellDrawer = ({
   launchApp,
   remoteApps,
+  showSettings,
 }: {
   launchApp: (appId: keyof RemoteApps) => void
   remoteApps: RemoteApps
+  showSettings: () => void
 }) => {
   const classes = useStyles()
 
@@ -63,6 +67,21 @@ export const ShellDrawer = ({
               </ListItem>
             )
           })}
+        </List>
+        <Divider />
+        <List>
+          <ListItem
+            button
+            onClick={() => {
+              setDrawerOpen(false)
+              showSettings()
+            }}
+          >
+            <ListItemIcon>
+              <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary='Settings' />
+          </ListItem>
         </List>
       </Drawer>
     </>
