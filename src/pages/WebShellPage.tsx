@@ -10,6 +10,7 @@ import {
   createCompositorRemoteAppLauncher,
   createCompositorRemoteSocket,
   createKeyEventFromKeyboardEvent,
+  nrmlvo,
 } from 'greenfield-compositor'
 import React, { useEffect, useRef, useState } from 'react'
 import { AppMenu } from '../components/AppMenu'
@@ -29,6 +30,17 @@ function initializeCanvas(session: CompositorSession, canvas: HTMLCanvasElement,
   // don't show browser context menu on right click
   canvas.oncontextmenu = (event: MouseEvent) => event.preventDefault()
   canvas.onblur = () => session.userShell.actions.input.blur()
+
+  const keymapJSON = window.localStorage.getItem('keymap')
+  if (keymapJSON) {
+    const keymap: nrmlvo = JSON.parse(keymapJSON)
+    session.userShell.actions.setUserConfiguration({ keyboardLayoutName: keymap.name })
+  }
+  const scrollFactorJSON = window.localStorage.getItem('scrollFactor')
+  if (scrollFactorJSON) {
+    const scrollFactor: number = JSON.parse(scrollFactorJSON)
+    session.userShell.actions.setUserConfiguration({ scrollFactor })
+  }
 
   //wire up dom input events to compositor input events
   const pointerMoveHandler = (event: PointerEvent) => {

@@ -30,6 +30,7 @@ export const Settings = ({ compositorSession }: { compositorSession: CompositorS
   const setLayout = (nrmlvo: nrmlvo) => {
     compositorSession.userShell.actions.setUserConfiguration({ keyboardLayoutName: nrmlvo.name })
     setNrmlvo(nrmlvo)
+    window.localStorage.setItem('keymap', JSON.stringify(nrmlvo))
   }
 
   const [scrollFactor, setScrollFactor] = useState(currentScrollFactor)
@@ -41,6 +42,7 @@ export const Settings = ({ compositorSession }: { compositorSession: CompositorS
     const newScrollFactor = scrollSpeed / 100
     compositorSession.userShell.actions.setUserConfiguration({ scrollFactor: newScrollFactor })
     setScrollFactor(scrollFactor)
+    window.localStorage.setItem('scrollFactor', JSON.stringify(scrollFactor))
   }
   const handleScrollSpeedLabelUpdate = (value: number) => `${value}%`
 
