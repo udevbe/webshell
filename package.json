@@ -15,8 +15,8 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "PORT=3001 env-cmd -f ./.env.supabase-hosted craco start",
-    "start:supabase-local": "PORT=3001 env-cmd -f ./.env.supabase-local craco start",
+    "start": "PORT=3001 craco start",
+    "start:supabase-local": "PORT=3001 craco start",
     "build": "craco build",
     "test": "craco test"
   },
