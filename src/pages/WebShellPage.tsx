@@ -19,6 +19,7 @@ import { FileUpload } from '../components/FileUpload'
 import { Settings } from '../components/Settings'
 import { ShellDrawer } from '../components/ShellDrawer'
 import { RemoteApps } from '../types/webshell'
+import { UserMenu } from '../components/UserMenu'
 
 function initializeCanvas(session: CompositorSession, canvas: HTMLCanvasElement, sceneId: string) {
   // register canvas with compositor session
@@ -221,18 +222,18 @@ export const WebShellPage = ({
                   alignItems: 'center',
                 }}
               />
-              {/*<Box*/}
-              {/*  mt={0.25}*/}
-              {/*  pr={1}*/}
-              {/*  pl={1}*/}
-              {/*  height={48}*/}
-              {/*  style={{*/}
-              {/*    display: 'flex',*/}
-              {/*    alignItems: 'center',*/}
-              {/*  }}*/}
-              {/*>*/}
-              {/*  <UserMenu />*/}
-              {/*</Box>*/}
+              <Box
+                mt={0.25}
+                pr={1}
+                pl={1}
+                height={48}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <UserMenu />
+              </Box>
             </>
           )}
         </Toolbar>

@@ -1,30 +1,26 @@
 import React, { ReactElement } from 'react'
-import { Route, Redirect, RouteProps } from 'react-router-dom'
-import { Location } from 'history'
-import { useSupabase } from './SupaBaseContext'
+import { Route, Redirect } from 'react-router-dom'
 
-const PrivateRouteRender = ({ children, location }: { children: ReactElement; location: Location }) => {
-  const { supabase } = useSupabase()
+import { useKeycloak } from '@react-keycloak/web'
 
-  if (supabase.auth.user()) {
-    return children
-  } else {
-    return (
-      <Redirect
-        to={{
-          pathname: '/login',
-          state: { from: location },
-        }}
-      />
-    )
-  }
-}
-
-export const PrivateRoute = ({ children, path }: { children: ReactElement; path: RouteProps['path'] }) => {
+export const PrivateRoute = ({ children, path }: { children: ReactElement; path: string }) => {
+  const { keycloak } = useKeycloak()
   return (
     <Route
       path={path}
-      render={({ location }) => <PrivateRouteRender location={location}>{children}</PrivateRouteRender>}
+      render={(props) =>
+        keycloak?.authenticated ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: '/login',
+              // eslint-disable-next-line react/prop-types
+              state: { from: props.location },
+            }}
+          />
+        )
+      }
     />
   )
 }

@@ -12,14 +12,14 @@ import {
 } from '@material-ui/core'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import { useKeycloak } from '@react-keycloak/web'
 import React, { MouseEventHandler, useEffect, useRef, useState } from 'react'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
-import { useSupabase } from '../SupaBaseContext'
 import { useHistory } from 'react-router-dom'
 
 export const UserMenu = () => {
-  const { supabase } = useSupabase()
+  const { keycloak } = useKeycloak()
   const history = useHistory()
   const userButtonAnchorRef = useRef<HTMLButtonElement>(null)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
@@ -43,7 +43,8 @@ export const UserMenu = () => {
   }
   const logout: MouseEventHandler<HTMLLIElement | HTMLAnchorElement> = (event) => {
     event.preventDefault()
-    supabase.auth.signOut().catch((err) => alert(err.message))
+    // TODO check return
+    keycloak.logout()
   }
 
   const changePassword: MouseEventHandler<HTMLLIElement | HTMLAnchorElement> = () => {
@@ -71,7 +72,7 @@ export const UserMenu = () => {
             textTransform: 'none',
           }}
         >
-          {supabase.auth.user()?.email ?? 'Unknown User'}
+          {keycloak.clientId ?? 'Unknown User'}
         </Typography>{' '}
       </Button>
       <Popper open={userMenuOpen} anchorEl={userButtonAnchorRef.current} role={undefined} transition disablePortal>

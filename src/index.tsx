@@ -1,7 +1,7 @@
 import { createCompositorSession, initWasm } from 'greenfield-compositor'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { AppNoLogin } from './AppNoLogin'
+import { App } from './App'
 import { RemoteApps } from './types/webshell'
 
 async function main() {
@@ -12,7 +12,7 @@ async function main() {
   const compositorSession = createCompositorSession()
 
   ReactDOM.render(
-    <AppNoLogin compositorSession={compositorSession} remoteApps={remoteApps} />,
+    <App compositorSession={compositorSession} remoteApps={remoteApps} />,
     document.getElementById('root'),
   )
 }
