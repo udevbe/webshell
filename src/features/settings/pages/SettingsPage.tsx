@@ -1,53 +1,70 @@
-import { Divider, List, ListItem, ListItemIcon, ListItemText, Slider, TextField, Typography } from '@material-ui/core'
+import {
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Slider,
+  TextField,
+  Typography,
+} from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { Keyboard, Mouse } from '@material-ui/icons'
+import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import { Autocomplete } from '@material-ui/lab'
-import React, { useRef, useState } from 'react'
-import { CompositorSession, nrmlvo } from 'greenfield-compositor'
+import { nrmlvo } from 'greenfield-compositor'
+import React, { FunctionComponent, useRef, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import { Page } from '../../../app/components/Page'
+import { useAppDispatch, useAppSelector } from '../../../app/hooks'
+import {
+  configureKeymap,
+  configureScrollFactor,
+  selectAvailableKeymaps,
+  selectKeymap,
+  selectScrollFactor,
+} from '../settingsSlice'
 
 const useStyles = makeStyles((theme) => ({
   spacer: {
     marginTop: theme.spacing(6),
   },
-  container: {
-    backgroundColor: theme.palette.background.default,
-    width: '100%',
-    height: '100%',
-  },
 }))
 
-export const Settings = ({ compositorSession }: { compositorSession: CompositorSession }) => {
-  const classes = useStyles()
+export const SettingsPage: FunctionComponent = () => {
+  const history = useHistory()
+  const goBack = () => history.goBack()
 
-  const nrmlvoEntries: nrmlvo[] = compositorSession.globals.seat.keyboard.nrmlvoEntries
-  const currentNrmlvo = compositorSession.globals.seat.keyboard.nrmlvo
-  const currentScrollFactor = compositorSession.globals.seat.pointer.scrollFactor
+  const dispatch = useAppDispatch()
+
+  const availableKeymaps = useAppSelector(selectAvailableKeymaps)
+  const nrmlvo = useAppSelector(selectKeymap)
+  const scrollFactor = useAppSelector(selectScrollFactor)
 
   const keyboardLayoutNames = useRef<string[]>([])
-  keyboardLayoutNames.current = nrmlvoEntries.map((nrmlvo) => nrmlvo.name)
-  const [nrmlvo, setNrmlvo] = useState(currentNrmlvo)
+  keyboardLayoutNames.current = availableKeymaps.map((nrmlvo) => nrmlvo.name)
 
-  const setLayout = (nrmlvo: nrmlvo) => {
-    compositorSession.userShell.actions.setUserConfiguration({ keyboardLayoutName: nrmlvo.name })
-    setNrmlvo(nrmlvo)
-    window.localStorage.setItem('keymap', JSON.stringify(nrmlvo))
-  }
+  const setLayout = (keymap: nrmlvo) => dispatch(configureKeymap({ keymap }))
 
-  const [scrollFactor, setScrollFactor] = useState(currentScrollFactor)
   const [scrollSpeed, setScrollSpeed] = useState(scrollFactor * 100)
-  const handleScrollSpeedUpdate = (value: number) => {
-    setScrollSpeed(value)
-  }
+  const handleScrollSpeedUpdate = (value: number) => setScrollSpeed(value)
   const handleScrollSpeedCommit = () => {
-    const newScrollFactor = scrollSpeed / 100
-    compositorSession.userShell.actions.setUserConfiguration({ scrollFactor: newScrollFactor })
-    setScrollFactor(scrollFactor)
-    window.localStorage.setItem('scrollFactor', JSON.stringify(scrollFactor))
+    const scrollFactor = scrollSpeed / 100
+    dispatch(configureScrollFactor({ scrollFactor }))
   }
-  const handleScrollSpeedLabelUpdate = (value: number) => `${value}%`
 
+  const classes = useStyles()
   return (
-    <div className={classes.container}>
+    <Page
+      header={
+        <>
+          <IconButton onClick={goBack}>
+            <ArrowBackIcon />
+          </IconButton>
+        </>
+      }
+    >
       <List>
         <ListItem>
           <ListItemIcon>
@@ -60,10 +77,10 @@ export const Settings = ({ compositorSession }: { compositorSession: CompositorS
           <Autocomplete
             id='keyboard-layout'
             disableClearable
-            options={nrmlvoEntries}
+            options={availableKeymaps}
             getOptionLabel={(nrmlvo) => nrmlvo.name}
             value={nrmlvo}
-            inputValue={nrmlvo.name}
+            inputValue={nrmlvo?.name}
             style={{ width: '100%' }}
             onChange={(_, value) => setLayout(value)}
             renderInput={(params) => <TextField {...params} label='Layout' variant='standard' fullWidth />}
@@ -99,16 +116,14 @@ export const Settings = ({ compositorSession }: { compositorSession: CompositorS
             aria-labelledby='scroll-speed-slider'
             valueLabelDisplay='on'
             value={scrollSpeed}
-            valueLabelFormat={(value) => handleScrollSpeedLabelUpdate(value)}
-            onChange={(_, value) => {
-              handleScrollSpeedUpdate(value as number)
-            }}
+            valueLabelFormat={(value: number) => `${value}%`}
+            onChange={(_, value) => handleScrollSpeedUpdate(value as number)}
             onChangeCommitted={() => handleScrollSpeedCommit()}
           />
         </ListItem>
 
         <div className={classes.spacer} />
       </List>
-    </div>
+    </Page>
   )
 }

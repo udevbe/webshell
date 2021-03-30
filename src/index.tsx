@@ -2,11 +2,11 @@ import { createCompositorSession, initWasm } from 'greenfield-compositor'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { App } from './App'
-import { RemoteApps } from './types/webshell'
+import { RemoteApp } from './app/types/webshell'
 
 async function main() {
   const remoteAppsResponse = await fetch('apps.json')
-  const remoteApps: RemoteApps = await remoteAppsResponse.json()
+  const remoteApps: RemoteApp[] = await remoteAppsResponse.json()
 
   await initWasm()
   const compositorSession = createCompositorSession()

@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import React, { useEffect, useRef, useState } from 'react'
-import { RemoteApps } from '../types/webshell'
+import { RemoteApps } from '../../../app/types/webshell'
 
 export const AppMenu = ({ activeApp }: { activeApp: RemoteApps[keyof RemoteApps] }) => {
   const activeAppButtonAnchorRef = useRef<HTMLButtonElement>(null)

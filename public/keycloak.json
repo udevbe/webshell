@@ -1,0 +1,10 @@
+{
+  "realm": "test-realm",
+  "auth-server-url": "http://localhost:8080/auth/",
+  "url": "http://localhost:8080/auth/",
+  "ssl-required": "external",
+  "resource": "greenfield",
+  "clientId": "greenfield",
+  "public-client": true,
+  "confidential-port": 0
+}

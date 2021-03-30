@@ -1,5 +1,4 @@
-import { Box, IconButton, Typography } from '@material-ui/core'
-import ArrowBackIcon from '@material-ui/icons/ArrowBack'
+import { Box, Typography } from '@material-ui/core'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import {
@@ -13,12 +12,11 @@ import {
   nrmlvo,
 } from 'greenfield-compositor'
 import React, { useEffect, useRef, useState } from 'react'
+import { RemoteApp } from '../../../app/types/webshell'
 import { AppMenu } from '../components/AppMenu'
 import { Scene } from '../components/Compositor'
 import { FileUpload } from '../components/FileUpload'
-import { Settings } from '../components/Settings'
 import { ShellDrawer } from '../components/ShellDrawer'
-import { RemoteApps } from '../types/webshell'
 import { UserMenu } from '../components/UserMenu'
 
 function initializeCanvas(session: CompositorSession, canvas: HTMLCanvasElement, sceneId: string) {
@@ -109,16 +107,15 @@ function linkUserShellEvents(session: CompositorSession, activeClient: (clientId
   }
 }
 
-export const WebShellPage = ({
+export const CompositorPage = ({
   compositorSession,
   remoteApps,
 }: {
   compositorSession: CompositorSession
-  remoteApps: RemoteApps
+  remoteApps: RemoteApp[]
 }) => {
   const canvasParent = useRef<HTMLDivElement>(null)
-  const [activeApp, setActiveApp] = useState<RemoteApps[keyof RemoteApps] | null>(null)
-  const [showSettings, setShowSettings] = useState<boolean>(false)
+  const [activeApp, setActiveApp] = useState<RemoteApp | null>(null)
   const activeAppRef = useRef(activeApp)
   useEffect(() => {
     activeAppRef.current = activeApp
@@ -128,8 +125,7 @@ export const WebShellPage = ({
     createCompositorRemoteAppLauncher(compositorSession, createCompositorRemoteSocket(compositorSession)),
   )
 
-  const launchApp = (appId: keyof RemoteApps) => {
-    const app = remoteApps[appId]
+  const launchApp = (app: RemoteApp) => {
     if (app.client) {
       return
     }
@@ -186,63 +182,51 @@ export const WebShellPage = ({
       <AppBar position='static' color='default' variant='outlined'>
         <Toolbar variant='dense'>
           <ShellDrawer launchApp={launchApp} remoteApps={remoteApps} showSettings={() => setShowSettings(true)} />
-          {showSettings ? (
-            <IconButton onClick={() => setShowSettings(false)}>
-              <ArrowBackIcon />
-            </IconButton>
-          ) : (
-            <>
-              <FileUpload />
-              <Box
-                mt={0.25}
-                mr={2}
-                pr={1}
-                pl={1}
-                width={186}
-                height={48}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                {activeApp ? (
-                  <AppMenu activeApp={activeApp} />
-                ) : (
-                  <Typography color='textSecondary' variant='caption'>
-                    No Application active
-                  </Typography>
-                )}
-              </Box>
-              <Box
-                mr={4}
-                display='flex'
-                flex={1}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              />
-              <Box
-                mt={0.25}
-                pr={1}
-                pl={1}
-                height={48}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <UserMenu />
-              </Box>
-            </>
-          )}
+          <FileUpload />
+          <Box
+            mt={0.25}
+            mr={2}
+            pr={1}
+            pl={1}
+            width={186}
+            height={48}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            {activeApp ? (
+              <AppMenu activeApp={activeApp} />
+            ) : (
+              <Typography color='textSecondary' variant='caption'>
+                No Application active
+              </Typography>
+            )}
+          </Box>
+          <Box
+            mr={4}
+            display='flex'
+            flex={1}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          />
+          <Box
+            mt={0.25}
+            pr={1}
+            pl={1}
+            height={48}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <UserMenu />
+          </Box>
         </Toolbar>
       </AppBar>
-      {showSettings ? (
-        <Settings compositorSession={compositorSession} />
-      ) : (
-        <Scene parentRef={canvasParent} getCanvas={getSceneCanvas} />
-      )}
+      <Scene parentRef={canvasParent} getCanvas={getSceneCanvas} />
     </div>
   )
 }

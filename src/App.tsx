@@ -1,42 +1,50 @@
 import { CssBaseline } from '@material-ui/core'
 import { CompositorSession } from 'greenfield-compositor'
-import React from 'react'
+import React, { FunctionComponent } from 'react'
+import { Provider } from 'react-redux'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import store from './app/store'
+import { RemoteApp } from './app/types/webshell'
+import { LoginPage } from './features/auth/pages/LoginPage'
+import { CompositorPage } from './features/compositor/pages/CompositorPage'
+import { SettingsPage } from './features/settings/pages/SettingsPage'
 import keycloak from './keycloak'
-import { LoginPage } from './pages/LoginPage'
-import { WebShellPage } from './pages/WebShellPage'
 import { PrivateRoute } from './PrivateRoute'
-import { RemoteApps } from './types/webshell'
 import { ReactKeycloakProvider } from '@react-keycloak/web'
 
-const Pages = ({ compositorSession, remoteApps }: { compositorSession: CompositorSession; remoteApps: RemoteApps }) => {
+const Pages: FunctionComponent<{ compositorSession: CompositorSession; remoteApps: RemoteApp[] }> = ({
+  compositorSession,
+  remoteApps,
+}) => {
   return (
     <Switch>
       <Route path='/login'>
         <LoginPage />
       </Route>
       <PrivateRoute path='/'>
-        <WebShellPage compositorSession={compositorSession} remoteApps={remoteApps} />
+        <CompositorPage compositorSession={compositorSession} remoteApps={remoteApps} />
+      </PrivateRoute>
+      <PrivateRoute path='/settings'>
+        <SettingsPage compositorSession={compositorSession} />
       </PrivateRoute>
     </Switch>
   )
 }
 
-export const App = ({
-  compositorSession,
-  remoteApps,
-}: {
+export const App: FunctionComponent<{
   compositorSession: CompositorSession
-  remoteApps: RemoteApps
-}) => {
+  remoteApps: RemoteApp[]
+}> = ({ compositorSession, remoteApps }) => {
   return (
     <React.StrictMode>
       <ReactKeycloakProvider authClient={keycloak}>
-        <CssBaseline>
-          <BrowserRouter>
-            <Pages compositorSession={compositorSession} remoteApps={remoteApps} />
-          </BrowserRouter>
-        </CssBaseline>
+        <Provider store={store}>
+          <CssBaseline>
+            <BrowserRouter>
+              <Pages compositorSession={compositorSession} remoteApps={remoteApps} />
+            </BrowserRouter>
+          </CssBaseline>
+        </Provider>
       </ReactKeycloakProvider>
     </React.StrictMode>
   )

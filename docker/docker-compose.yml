@@ -20,6 +20,13 @@ services:
       - 80:80
     volumes:
       - upload:/upload:rw
+  keycloak:
+    build:
+      context: ./keycloak
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
+
 volumes:
   upload:
     driver_opts:
