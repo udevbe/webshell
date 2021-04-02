@@ -36,8 +36,6 @@ export const SettingsPage: FunctionComponent = () => {
   const history = useHistory()
   const goBack = () => history.goBack()
 
-  const dispatch = useAppDispatch()
-
   const availableKeymaps = useAppSelector(selectAvailableKeymaps)
   const nrmlvo = useAppSelector(selectKeymap)
   const scrollFactor = useAppSelector(selectScrollFactor)
@@ -45,6 +43,7 @@ export const SettingsPage: FunctionComponent = () => {
   const keyboardLayoutNames = useRef<string[]>([])
   keyboardLayoutNames.current = availableKeymaps.map((nrmlvo) => nrmlvo.name)
 
+  const dispatch = useAppDispatch()
   const setLayout = (keymap: nrmlvo) => dispatch(configureKeymap({ keymap }))
 
   const [scrollSpeed, setScrollSpeed] = useState(scrollFactor * 100)
@@ -121,7 +120,6 @@ export const SettingsPage: FunctionComponent = () => {
             onChangeCommitted={() => handleScrollSpeedCommit()}
           />
         </ListItem>
-
         <div className={classes.spacer} />
       </List>
     </Page>

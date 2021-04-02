@@ -1,34 +1,40 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../../app/store'
-import { RemoteApp } from '../../app/types/webshell'
+import { RemoteApp } from '../remote-apps/types'
 
 interface CompositorState {
-  scene: HTMLCanvasElement
-  activeApp?: RemoteApp
-  availableApps: RemoteApp[]
+  activeClient?: { id: string }
+  loading: boolean
 }
 
+export const scene: HTMLCanvasElement = document.createElement('canvas')
+
 const initialState: CompositorState = {
-  scene: document.createElement('canvas'),
-  activeApp: undefined,
-  availableApps: [],
+  activeClient: undefined,
+  loading: true,
 }
 
 export const compositorSlice = createSlice({
   name: 'compositor',
   initialState,
   reducers: {
-    makeAppActive: (state, action: PayloadAction<{ app: RemoteApp }>) => {
-      state.activeApp = action.payload.app
+    markClientActive(state, action: PayloadAction<{ client: { id: string } }>) {
+      state.activeClient = action.payload.client
     },
-    closeActiveApp: (state) => {
-      state.activeApp = undefined
+    clearActiveClient(state) {
+      state.activeClient = undefined
+    },
+    markCompositorReady(state) {
+      state.loading = false
     },
   },
 })
 
-export const { makeAppActive, closeActiveApp } = compositorSlice.actions
+export const { markClientActive, clearActiveClient, markCompositorReady } = compositorSlice.actions
+export const closeApp = createAction<{ app: RemoteApp }, 'compositor/closeApp'>('compositor/closeApp')
+export const forceSceneRedraw = createAction('compositor/forceSceneRedraw')
 
-export const selectActiveApp = (state: RootState) => state.compositor.activeApp
+export const selectActiveClient = (state: RootState) => state.compositor.activeClient
+export const selectCompositorLoading = (state: RootState) => state.compositor.loading
 
 export default compositorSlice.reducer

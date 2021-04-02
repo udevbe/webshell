@@ -11,9 +11,10 @@ import {
 } from '@material-ui/core'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import React, { useEffect, useRef, useState } from 'react'
-import { RemoteApps } from '../../../app/types/webshell'
+import { useAppDispatch } from '../../../app/hooks'
+import { RemoteApp } from '../../remote-apps/types'
 
-export const AppMenu = ({ activeApp }: { activeApp: RemoteApps[keyof RemoteApps] }) => {
+export const AppMenu = ({ activeApp }: { activeApp: RemoteApp }) => {
   const activeAppButtonAnchorRef = useRef<HTMLButtonElement>(null)
   const [activeAppMenuOpen, setActiveAppMenuOpen] = useState(false)
   const prevActiveAppMenuOpen = useRef(activeAppMenuOpen)
@@ -34,7 +35,9 @@ export const AppMenu = ({ activeApp }: { activeApp: RemoteApps[keyof RemoteApps]
 
     setActiveAppMenuOpen(false)
   }
-  const closeActiveApp = () => activeApp?.client?.close()
+
+  const dispatch = useAppDispatch()
+  const closeApp: any = () => dispatch(closeApp({ app: activeApp }))
   const handleActiveAppMenuToggle = () => setActiveAppMenuOpen((prevOpen) => !prevOpen)
 
   return (
@@ -84,7 +87,7 @@ export const AppMenu = ({ activeApp }: { activeApp: RemoteApps[keyof RemoteApps]
                   <MenuItem
                     dense
                     onClick={(event) => {
-                      closeActiveApp()
+                      closeApp()
                       handleActiveAppMenuClose(event)
                     }}
                   >

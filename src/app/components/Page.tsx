@@ -1,31 +1,32 @@
-import { Toolbar } from '@material-ui/core'
-import AppBar from '@material-ui/core/AppBar'
+import { Toolbar, AppBar } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import React, { FunctionComponent, ReactElement } from 'react'
+import { PageDrawer } from './PageDrawer'
 
 const useStyles = makeStyles((theme) => ({
-  container: {
-    backgroundColor: theme.palette.background.default,
-    width: '100%',
+  page: {
     height: '100%',
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  content: {
+    backgroundColor: theme.palette.background.default,
+    flex: 1,
   },
 }))
 
 export const Page: FunctionComponent<{ header: ReactElement }> = ({ children, header }) => {
   const classes = useStyles()
-
   return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
+    <div className={classes.page}>
       <AppBar position='static' color='default' variant='outlined'>
-        <Toolbar variant='dense'>{header}</Toolbar>
+        <Toolbar variant='dense'>
+          <PageDrawer />
+          {header}
+        </Toolbar>
       </AppBar>
-      <div className={classes.container}>{children}</div>
+      <div className={classes.content}>{children}</div>
     </div>
   )
 }
