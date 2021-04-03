@@ -13,6 +13,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import React, { useEffect, useRef, useState } from 'react'
 import { useAppDispatch } from '../../../app/hooks'
 import { RemoteApp } from '../../remote-apps/types'
+import { closeApp } from '../compositorSlice'
 
 export const AppMenu = ({ activeApp }: { activeApp: RemoteApp }) => {
   const activeAppButtonAnchorRef = useRef<HTMLButtonElement>(null)
@@ -24,7 +25,6 @@ export const AppMenu = ({ activeApp }: { activeApp: RemoteApp }) => {
     if (prevActiveAppMenuOpen.current && !activeAppMenuOpen) {
       activeAppButtonAnchorRef.current?.focus()
     }
-
     prevActiveAppMenuOpen.current = activeAppMenuOpen
   }, [activeAppMenuOpen])
 
@@ -37,7 +37,7 @@ export const AppMenu = ({ activeApp }: { activeApp: RemoteApp }) => {
   }
 
   const dispatch = useAppDispatch()
-  const closeApp: any = () => dispatch(closeApp({ app: activeApp }))
+  const onCloseApp: any = () => dispatch(closeApp({ app: activeApp }))
   const handleActiveAppMenuToggle = () => setActiveAppMenuOpen((prevOpen) => !prevOpen)
 
   return (
@@ -47,9 +47,7 @@ export const AppMenu = ({ activeApp }: { activeApp: RemoteApp }) => {
         onClick={handleActiveAppMenuToggle}
         fullWidth
         size='small'
-        startIcon={
-          <img src={`/apps/${activeApp.id}/${activeApp.icon}`} style={{ width: 24, height: 24, marginRight: 8 }} />
-        }
+        startIcon={<img src={activeApp.icon} style={{ width: 24, height: 24, marginRight: 8 }} />}
         endIcon={<ArrowDropDownIcon />}
       >
         <Typography
@@ -87,7 +85,7 @@ export const AppMenu = ({ activeApp }: { activeApp: RemoteApp }) => {
                   <MenuItem
                     dense
                     onClick={(event) => {
-                      closeApp()
+                      onCloseApp()
                       handleActiveAppMenuClose(event)
                     }}
                   >
