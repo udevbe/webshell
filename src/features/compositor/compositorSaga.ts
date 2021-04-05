@@ -13,6 +13,7 @@ import {
 import { call, fork, getContext, put, setContext, take, takeEvery, takeLatest } from 'redux-saga/effects'
 import { eventChannel } from 'redux-saga'
 import { remoteAppsSaga } from '../remote-apps/remoteAppsSaga'
+import { settingsSaga } from '../settings/settingsSaga'
 import { PayloadActionFromCreator } from '../type-utils'
 import {
   clearActiveClient,
@@ -180,6 +181,7 @@ export function* compositorSaga(): any {
   yield call(initWasm)
   const session: CompositorSession = yield call(createCompositorSession)
   yield fork(remoteAppsSaga, session)
+  yield fork(settingsSaga, session)
   yield fork(watchAllEvents, session)
   yield call(initializeScene, session, scene, 'default')
   yield call(done, session)

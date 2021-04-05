@@ -9,6 +9,6 @@
     "id": "remote-kwrite",
     "icon": "/apps/remote-kwrite/icon.svg",
     "title": "KWrite",
-    "url": "ws://localhost:8081?launch=remote-kwrite"
+    "url": "wss://app-endpoint.greenfield.app?launch=remote-kwrite"
   }
 ]

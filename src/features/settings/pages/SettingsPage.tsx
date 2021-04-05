@@ -21,9 +21,10 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks'
 import {
   configureKeymap,
   configureScrollFactor,
-  selectAvailableKeymaps,
-  selectKeymap,
+  selectActiveKeymap,
+  selectKeymaps,
   selectScrollFactor,
+  selectSettingsLoading,
 } from '../settingsSlice'
 
 const useStyles = makeStyles((theme) => ({
@@ -36,9 +37,10 @@ export const SettingsPage: FunctionComponent = () => {
   const history = useHistory()
   const goBack = () => history.goBack()
 
-  const availableKeymaps = useAppSelector(selectAvailableKeymaps)
-  const nrmlvo = useAppSelector(selectKeymap)
+  const availableKeymaps = useAppSelector(selectKeymaps)
+  const nrmlvo = useAppSelector(selectActiveKeymap)
   const scrollFactor = useAppSelector(selectScrollFactor)
+  const loading = useAppSelector(selectSettingsLoading)
 
   const keyboardLayoutNames = useRef<string[]>([])
   keyboardLayoutNames.current = availableKeymaps.map((nrmlvo) => nrmlvo.name)
@@ -64,64 +66,66 @@ export const SettingsPage: FunctionComponent = () => {
         </>
       }
     >
-      <List>
-        <ListItem>
-          <ListItemIcon>
-            <Keyboard />
-          </ListItemIcon>
-          <ListItemText primary='Keyboard' />
-        </ListItem>
-        <Divider variant='fullWidth' />
-        <ListItem>
-          <Autocomplete
-            id='keyboard-layout'
-            disableClearable
-            options={availableKeymaps}
-            getOptionLabel={(nrmlvo) => nrmlvo.name}
-            value={nrmlvo}
-            inputValue={nrmlvo?.name}
-            style={{ width: '100%' }}
-            onChange={(_, value) => setLayout(value)}
-            renderInput={(params) => <TextField {...params} label='Layout' variant='standard' fullWidth />}
-          />
-        </ListItem>
+      {loading ? null : (
+        <List>
+          <ListItem>
+            <ListItemIcon>
+              <Keyboard />
+            </ListItemIcon>
+            <ListItemText primary='Keyboard' />
+          </ListItem>
+          <Divider variant='fullWidth' />
+          <ListItem>
+            <Autocomplete
+              id='keyboard-layout'
+              disableClearable
+              options={availableKeymaps}
+              getOptionLabel={(nrmlvo) => nrmlvo.name}
+              value={nrmlvo}
+              inputValue={nrmlvo?.name}
+              style={{ width: '100%' }}
+              onChange={(_, value) => setLayout(value)}
+              renderInput={(params) => <TextField {...params} label='Layout' variant='standard' fullWidth />}
+            />
+          </ListItem>
 
-        <div className={classes.spacer} />
-        <ListItem>
-          <ListItemIcon>
-            <Mouse />
-          </ListItemIcon>
-          <ListItemText primary='Mouse' />
-        </ListItem>
-        <Divider variant='fullWidth' />
-        <ListItem
-          style={{
-            paddingBottom: 0,
-          }}
-        >
-          <Typography id='scroll-speed-slider' gutterBottom={false} variant='caption' color='textSecondary'>
-            Scroll Speed
-          </Typography>
-        </ListItem>
-        <ListItem
-          style={{
-            paddingTop: 0,
-          }}
-        >
-          <Slider
-            min={1}
-            max={300}
-            step={1}
-            aria-labelledby='scroll-speed-slider'
-            valueLabelDisplay='on'
-            value={scrollSpeed}
-            valueLabelFormat={(value: number) => `${value}%`}
-            onChange={(_, value) => handleScrollSpeedUpdate(value as number)}
-            onChangeCommitted={() => handleScrollSpeedCommit()}
-          />
-        </ListItem>
-        <div className={classes.spacer} />
-      </List>
+          <div className={classes.spacer} />
+          <ListItem>
+            <ListItemIcon>
+              <Mouse />
+            </ListItemIcon>
+            <ListItemText primary='Mouse' />
+          </ListItem>
+          <Divider variant='fullWidth' />
+          <ListItem
+            style={{
+              paddingBottom: 0,
+            }}
+          >
+            <Typography id='scroll-speed-slider' gutterBottom={false} variant='caption' color='textSecondary'>
+              Scroll Speed
+            </Typography>
+          </ListItem>
+          <ListItem
+            style={{
+              paddingTop: 0,
+            }}
+          >
+            <Slider
+              min={1}
+              max={300}
+              step={1}
+              aria-labelledby='scroll-speed-slider'
+              valueLabelDisplay='on'
+              value={scrollSpeed}
+              valueLabelFormat={(value: number) => `${value}%`}
+              onChange={(_, value) => handleScrollSpeedUpdate(value as number)}
+              onChangeCommitted={() => handleScrollSpeedCommit()}
+            />
+          </ListItem>
+          <div className={classes.spacer} />
+        </List>
+      )}
     </Page>
   )
 }

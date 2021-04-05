@@ -13,15 +13,15 @@ import { ReactKeycloakProvider } from '@react-keycloak/web'
 const Pages: FunctionComponent = () => {
   return (
     <Switch>
-      <Route path='/login'>
+      <Route exact path='/login'>
         <LoginPage />
       </Route>
-      <Route path='/'>
+      <Route exact path='/'>
         <CompositorPage />
       </Route>
-      <PrivateRoute path='/settings'>
+      <Route exact path='/settings'>
         <SettingsPage />
-      </PrivateRoute>
+      </Route>
     </Switch>
   )
 }

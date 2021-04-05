@@ -3,34 +3,43 @@ import { nrmlvo } from 'greenfield-compositor'
 import type { RootState } from '../../app/store'
 
 interface SettingsState {
-  keymap?: nrmlvo
-  availableKeymaps: nrmlvo[]
+  activeKeymap?: nrmlvo
+  keymaps: nrmlvo[]
   scrollFactor: number
+  loading: boolean
 }
 
 const initialState: SettingsState = {
-  keymap: undefined,
+  activeKeymap: undefined,
   scrollFactor: 1,
-  availableKeymaps: [],
+  keymaps: [],
+  loading: true,
 }
 
 export const settingsSlice = createSlice({
   name: 'settings',
   initialState,
   reducers: {
-    configureScrollFactor: (state, action: PayloadAction<{ scrollFactor: number }>) => {
+    setKeymaps(state, action: PayloadAction<{ keymaps: nrmlvo[] }>) {
+      state.keymaps = action.payload.keymaps
+    },
+    configureScrollFactor(state, action: PayloadAction<{ scrollFactor: number }>) {
       state.scrollFactor = action.payload.scrollFactor
     },
-    configureKeymap: (state, action: PayloadAction<{ keymap: nrmlvo }>) => {
-      state.keymap = action.payload.keymap
+    configureKeymap(state, action: PayloadAction<{ keymap: nrmlvo }>) {
+      state.activeKeymap = action.payload.keymap
+    },
+    settingsDone(state) {
+      state.loading = false
     },
   },
 })
 
-export const { configureKeymap, configureScrollFactor } = settingsSlice.actions
+export const { settingsDone, setKeymaps, configureKeymap, configureScrollFactor } = settingsSlice.actions
 
-export const selectScrollFactor = (state: RootState) => state.settings.scrollFactor
-export const selectKeymap = (state: RootState) => state.settings.keymap
-export const selectAvailableKeymaps = (state: RootState) => state.settings.availableKeymaps
+export const selectScrollFactor = (state: RootState): number => state.settings.scrollFactor
+export const selectActiveKeymap = (state: RootState): nrmlvo | undefined => state.settings.activeKeymap
+export const selectKeymaps = (state: RootState): nrmlvo[] => state.settings.keymaps
+export const selectSettingsLoading = (state: RootState): boolean => state.settings.loading
 
 export default settingsSlice.reducer
