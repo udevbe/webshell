@@ -16,12 +16,12 @@ const Pages: FunctionComponent = () => {
       <Route exact path='/login'>
         <LoginPage />
       </Route>
-      <Route exact path='/'>
+      <PrivateRoute path='/'>
         <CompositorPage />
-      </Route>
-      <Route exact path='/settings'>
+      </PrivateRoute>
+      <PrivateRoute path='/settings'>
         <SettingsPage />
-      </Route>
+      </PrivateRoute>
     </Switch>
   )
 }

@@ -1,4 +1,3 @@
-import { PayloadAction } from '@reduxjs/toolkit'
 import { call, fork, put, select, takeLatest } from 'redux-saga/effects'
 import { CompositorSession, nrmlvo } from '../../../../greenfield/compositor-module'
 import { PayloadActionFromCreator } from '../type-utils'

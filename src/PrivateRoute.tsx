@@ -7,6 +7,7 @@ export const PrivateRoute = ({ children, path }: { children: ReactElement; path:
   const { keycloak } = useKeycloak()
   return (
     <Route
+      exact
       path={path}
       render={(props) =>
         keycloak?.authenticated ? (

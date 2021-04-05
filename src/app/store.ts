@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { persistStore, persistCombineReducers, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
-import { compositorSaga } from '../features/compositor/compositorSaga'
 import settings from '../features/settings/settingsSlice'
 import compositor from '../features/compositor/compositorSlice'
 import remoteApps from '../features/remote-apps/remoteAppsSlice'
+import { compositorSaga } from '../features/compositor/compositorSaga'
 import createSagaMiddleware from 'redux-saga'
 
 const sagaMiddleware = createSagaMiddleware()
