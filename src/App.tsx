@@ -14,9 +14,11 @@ const Pages: FunctionComponent = () => {
   const { initialized } = useKeycloak()
 
   if (!initialized) {
+    // TODO show loading page
     return null
   }
 
+  // TODO add a 404 page in case no url matches?
   return (
     <Switch>
       <Route exact path='/login' component={LoginPage} />

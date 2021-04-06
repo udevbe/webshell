@@ -15,7 +15,7 @@ import { useAppDispatch } from '../../../app/hooks'
 import { RemoteApp } from '../../remote-apps/types'
 import { closeApp } from '../compositorSlice'
 
-export const AppMenu = ({ activeApp }: { activeApp: RemoteApp }) => {
+export const ActiveClientMenu = ({ activeApp }: { activeApp: RemoteApp }) => {
   const activeAppButtonAnchorRef = useRef<HTMLButtonElement>(null)
   const [activeAppMenuOpen, setActiveAppMenuOpen] = useState(false)
   const prevActiveAppMenuOpen = useRef(activeAppMenuOpen)

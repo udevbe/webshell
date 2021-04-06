@@ -5,7 +5,7 @@ import { Page } from '../../../app/components/Page'
 import { useAppDispatch, useAppSelector } from '../../../app/hooks'
 import { Launcher } from '../../remote-apps/components/Launcher'
 import { selectAppByClientId } from '../../remote-apps/remoteAppsSlice'
-import { AppMenu } from '../components/AppMenu'
+import { ActiveClientMenu } from '../components/ActiveClientMenu'
 import { FileUpload } from '../components/FileUpload'
 import { UserMenu } from '../components/UserMenu'
 import { forceSceneRedraw, scene, selectActiveClient } from '../compositorSlice'
@@ -72,7 +72,7 @@ export const CompositorPage: FunctionComponent = () => {
             }}
           >
             {activeApp ? (
-              <AppMenu activeApp={activeApp} />
+              <ActiveClientMenu activeApp={activeApp} />
             ) : (
               <Typography color='textSecondary' variant='caption'>
                 No Application active

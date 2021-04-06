@@ -15,12 +15,9 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import { useKeycloak } from '@react-keycloak/web'
 import React, { MouseEventHandler, useEffect, useRef, useState } from 'react'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
-import VpnKeyIcon from '@material-ui/icons/VpnKey'
-import { useHistory } from 'react-router-dom'
 
 export const UserMenu = () => {
   const { keycloak } = useKeycloak()
-  const history = useHistory()
   const userButtonAnchorRef = useRef<HTMLButtonElement>(null)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const prevUserMenuOpen = useRef(userMenuOpen)
@@ -47,11 +44,10 @@ export const UserMenu = () => {
     keycloak.logout()
   }
 
-  const changePassword: MouseEventHandler<HTMLLIElement | HTMLAnchorElement> = () => {
-    history.push('/changepassword')
-  }
-
   const handleUserMenuToggle = () => setUserMenuOpen((prevOpen) => !prevOpen)
+
+  const [userName, setUserName] = useState<string | undefined>(undefined)
+  keycloak.loadUserProfile().then((value) => setUserName(value.username))
 
   return (
     <>
@@ -72,7 +68,7 @@ export const UserMenu = () => {
             textTransform: 'none',
           }}
         >
-          {keycloak.clientId ?? 'Unknown User'}
+          {userName ?? 'Unknown User'}
         </Typography>{' '}
       </Button>
       <Popper open={userMenuOpen} anchorEl={userButtonAnchorRef.current} role={undefined} transition disablePortal>
@@ -81,28 +77,9 @@ export const UserMenu = () => {
             {...TransitionProps}
             style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
           >
-            <Paper
-              style={
-                {
-                  // width: 170,
-                }
-              }
-              elevation={3}
-            >
+            <Paper elevation={3}>
               <ClickAwayListener onClickAway={handleUserMenuClose}>
                 <MenuList dense autoFocusItem={userMenuOpen} id='menu-list-grow'>
-                  <MenuItem
-                    dense
-                    onClick={(event) => {
-                      changePassword(event)
-                      handleUserMenuClose(event)
-                    }}
-                  >
-                    <ListItemIcon>
-                      <VpnKeyIcon />
-                    </ListItemIcon>
-                    <ListItemText>Change Password</ListItemText>
-                  </MenuItem>
                   <MenuItem
                     dense
                     onClick={(event) => {

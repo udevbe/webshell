@@ -3,6 +3,8 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 import MuiAlert from '@material-ui/lab/Alert'
 import React, { ChangeEvent, useState } from 'react'
 
+// TODO move file upload to separate feature
+
 type Upload = { fileName: string; progress: number; xhr: XMLHttpRequest }
 
 export const FileUpload = () => {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FunctionComponent } from 'react'
 import { Route, Redirect, RouteProps, RouteComponentProps } from 'react-router-dom'
 
 import { useKeycloak } from '@react-keycloak/web'
@@ -7,7 +7,10 @@ interface PrivateRouteParams extends RouteProps {
   component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>
 }
 
-export function PrivateRoute({ component: Component, ...rest }: PrivateRouteParams) {
+export const PrivateRoute: FunctionComponent<PrivateRouteParams> = ({
+  component: Component,
+  ...rest
+}: PrivateRouteParams) => {
   const { keycloak } = useKeycloak()
 
   return (
