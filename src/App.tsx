@@ -8,20 +8,20 @@ import { CompositorPage } from './features/compositor/pages/CompositorPage'
 import { SettingsPage } from './features/settings/pages/SettingsPage'
 import keycloak from './keycloak'
 import { PrivateRoute } from './PrivateRoute'
-import { ReactKeycloakProvider } from '@react-keycloak/web'
+import { ReactKeycloakProvider, useKeycloak } from '@react-keycloak/web'
 
 const Pages: FunctionComponent = () => {
+  const { initialized } = useKeycloak()
+
+  if (!initialized) {
+    return null
+  }
+
   return (
     <Switch>
-      <Route exact path='/login'>
-        <LoginPage />
-      </Route>
-      <PrivateRoute path='/'>
-        <CompositorPage />
-      </PrivateRoute>
-      <PrivateRoute path='/settings'>
-        <SettingsPage />
-      </PrivateRoute>
+      <Route exact path='/login' component={LoginPage} />
+      <PrivateRoute exact path='/' component={CompositorPage} />
+      <PrivateRoute exact path='/settings' component={SettingsPage} />
     </Switch>
   )
 }

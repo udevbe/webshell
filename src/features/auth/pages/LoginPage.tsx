@@ -8,10 +8,7 @@ export const LoginPage = () => {
     from: { pathname: '/' },
   }
 
-  const { keycloak, initialized } = useKeycloak()
-  if (!initialized) {
-    return null
-  }
+  const { keycloak } = useKeycloak()
 
   if (keycloak?.authenticated) {
     return <Redirect to={currentLocationState?.from as string} />

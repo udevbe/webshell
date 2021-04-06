@@ -3,12 +3,12 @@
     "id": "remote-gtk3-demo",
     "icon": "/apps/remote-gtk3-demo/icon.svg",
     "title": "GTK3 Demo",
-    "url": "wss://app-endpoint.greenfield.app?launch=remote-gtk3-demo"
+    "url": "ws://localhost:8081?launch=remote-gtk3-demo"
   },
   {
     "id": "remote-kwrite",
     "icon": "/apps/remote-kwrite/icon.svg",
     "title": "KWrite",
-    "url": "wss://app-endpoint.greenfield.app?launch=remote-kwrite"
+    "url": "ws://localhost:8081?launch=remote-kwrite"
   }
 ]

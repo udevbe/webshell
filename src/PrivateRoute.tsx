@@ -1,22 +1,25 @@
-import React, { ReactElement } from 'react'
-import { Route, Redirect } from 'react-router-dom'
+import React from 'react'
+import { Route, Redirect, RouteProps, RouteComponentProps } from 'react-router-dom'
 
 import { useKeycloak } from '@react-keycloak/web'
 
-export const PrivateRoute = ({ children, path }: { children: ReactElement; path: string }) => {
+interface PrivateRouteParams extends RouteProps {
+  component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>
+}
+
+export function PrivateRoute({ component: Component, ...rest }: PrivateRouteParams) {
   const { keycloak } = useKeycloak()
+
   return (
     <Route
-      exact
-      path={path}
+      {...rest}
       render={(props) =>
         keycloak?.authenticated ? (
-          children
+          <Component {...props} />
         ) : (
           <Redirect
             to={{
               pathname: '/login',
-              // eslint-disable-next-line react/prop-types
               state: { from: props.location },
             }}
           />
