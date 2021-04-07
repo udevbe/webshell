@@ -1,4 +1,4 @@
-import { CssBaseline } from '@material-ui/core'
+import { CircularProgress, Container, CssBaseline, Typography } from '@material-ui/core'
 import React, { FunctionComponent } from 'react'
 import { Provider } from 'react-redux'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
@@ -10,20 +10,48 @@ import keycloak from './keycloak'
 import { PrivateRoute } from './PrivateRoute'
 import { ReactKeycloakProvider, useKeycloak } from '@react-keycloak/web'
 
+const NotFount: FunctionComponent = () => {
+  return (
+    <Container
+      style={{
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Typography>Page not found.</Typography>
+    </Container>
+  )
+}
+
 const Pages: FunctionComponent = () => {
   const { initialized } = useKeycloak()
 
+  // FIXME check keycloak init errors
   if (!initialized) {
-    // TODO show loading page
-    return null
+    return (
+      <Container
+        style={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress />
+      </Container>
+    )
   }
 
-  // TODO add a 404 page in case no url matches?
   return (
     <Switch>
       <Route exact path='/login' component={LoginPage} />
       <PrivateRoute exact path='/' component={CompositorPage} />
       <PrivateRoute exact path='/settings' component={SettingsPage} />
+      <Route path='*' component={NotFount} />
     </Switch>
   )
 }

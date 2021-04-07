@@ -13,6 +13,7 @@ export const LoginPage = () => {
   if (keycloak?.authenticated) {
     return <Redirect to={currentLocationState?.from as string} />
   } else {
+    // TODO check return state for errors
     keycloak?.login()
   }
 
