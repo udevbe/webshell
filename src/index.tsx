@@ -1,20 +1,9 @@
-import { createCompositorSession, initWasm } from 'greenfield-compositor'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { AppNoLogin } from './AppNoLogin'
-import { RemoteApps } from './types/webshell'
+import { App } from './App'
 
-async function main() {
-  const remoteAppsResponse = await fetch('apps.json')
-  const remoteApps: RemoteApps = await remoteAppsResponse.json()
-
-  await initWasm()
-  const compositorSession = createCompositorSession()
-
-  ReactDOM.render(
-    <AppNoLogin compositorSession={compositorSession} remoteApps={remoteApps} />,
-    document.getElementById('root'),
-  )
+function main() {
+  ReactDOM.render(<App />, document.getElementById('root'))
 }
 
 main()

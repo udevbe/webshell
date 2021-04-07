@@ -1,6 +1,17 @@
 version: "3.4"
 services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:12.0.4
+    environment:
+      KEYCLOAK_USER: 'admin'
+      KEYCLOAK_PASSWORD: 'admin'
+      KEYCLOAK_IMPORT: '/tmp/keycloak/example-realm.json'
+    volumes:
+      - './keycloak:/tmp/keycloak:ro'
+    ports:
+      - 8080:8080
   app-endpoint-server:
+    image: udevbe/webshell.app-endpoint-server
     build:
       context: ./app-endpoint-server
       dockerfile: ./Dockerfile
@@ -12,14 +23,16 @@ services:
       - 8081:8081
     environment:
       HOME: '/home/node'
-  webshell:
+  nginx:
+    image: udevbe/webshell.nginx
     build:
       context: ..
-      dockerfile: ./docker/webshell/Dockerfile
+      dockerfile: ./docker/nginx/Dockerfile
     ports:
       - 80:80
     volumes:
       - upload:/upload:rw
+
 volumes:
   upload:
     driver_opts:

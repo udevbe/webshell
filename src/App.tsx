@@ -1,50 +1,73 @@
-import { CssBaseline } from '@material-ui/core'
-import { CompositorSession } from 'greenfield-compositor'
-import React from 'react'
+import { CircularProgress, Container, CssBaseline, Typography } from '@material-ui/core'
+import React, { FunctionComponent } from 'react'
+import { Provider } from 'react-redux'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import { LoginPage } from './pages/LoginPage'
-import { ChangePasswordPage } from './pages/ChangePasswordPage'
-import { ResetPasswordPage } from './pages/ResetPasswordPage'
-import { WebShellPage } from './pages/WebShellPage'
+import { store } from './app/store'
+import { LoginPage } from './features/auth/pages/LoginPage'
+import { CompositorPage } from './features/compositor/pages/CompositorPage'
+import { SettingsPage } from './features/settings/pages/SettingsPage'
+import keycloak from './keycloak'
 import { PrivateRoute } from './PrivateRoute'
-import { SupabaseContextProvider } from './SupaBaseContext'
-import { RemoteApps } from './types/webshell'
+import { ReactKeycloakProvider, useKeycloak } from '@react-keycloak/web'
 
-const Pages = ({ compositorSession, remoteApps }: { compositorSession: CompositorSession; remoteApps: RemoteApps }) => {
+const NotFount: FunctionComponent = () => {
+  return (
+    <Container
+      style={{
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Typography>Page not found.</Typography>
+    </Container>
+  )
+}
+
+const Pages: FunctionComponent = () => {
+  const { initialized } = useKeycloak()
+
+  // FIXME check keycloak init errors
+  if (!initialized) {
+    return (
+      <Container
+        style={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress />
+      </Container>
+    )
+  }
+
   return (
     <Switch>
-      <Route path='/login'>
-        <LoginPage />
-      </Route>
-      <Route path='/resetpassword'>
-        <ResetPasswordPage />
-      </Route>
-      <PrivateRoute path='/changepassword'>
-        <ChangePasswordPage />
-      </PrivateRoute>
-      <PrivateRoute path='/'>
-        <WebShellPage compositorSession={compositorSession} remoteApps={remoteApps} />
-      </PrivateRoute>
+      <Route exact path='/login' component={LoginPage} />
+      <PrivateRoute exact path='/' component={CompositorPage} />
+      <PrivateRoute exact path='/settings' component={SettingsPage} />
+      <Route path='*' component={NotFount} />
     </Switch>
   )
 }
 
-export const App = ({
-  compositorSession,
-  remoteApps,
-}: {
-  compositorSession: CompositorSession
-  remoteApps: RemoteApps
-}) => {
+export const App: FunctionComponent = () => {
   return (
     <React.StrictMode>
-      <SupabaseContextProvider>
-        <CssBaseline>
-          <BrowserRouter>
-            <Pages compositorSession={compositorSession} remoteApps={remoteApps} />
-          </BrowserRouter>
-        </CssBaseline>
-      </SupabaseContextProvider>
+      <ReactKeycloakProvider authClient={keycloak}>
+        <Provider store={store}>
+          <CssBaseline>
+            <BrowserRouter>
+              <Pages />
+            </BrowserRouter>
+          </CssBaseline>
+        </Provider>
+      </ReactKeycloakProvider>
     </React.StrictMode>
   )
 }
