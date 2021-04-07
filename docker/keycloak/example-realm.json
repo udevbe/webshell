@@ -1,6 +1,6 @@
 {
-  "id": "test-realm",
-  "realm": "test-realm",
+  "id": "Greenfield",
+  "realm": "Greenfield",
   "notBefore": 0,
   "revokeRefreshToken": false,
   "refreshTokenMaxReuse": 0,
@@ -48,7 +48,7 @@
         "description": "${role_offline-access}",
         "composite": false,
         "clientRole": false,
-        "containerId": "test-realm",
+        "containerId": "Greenfield",
         "attributes": {}
       },
       {
@@ -57,7 +57,7 @@
         "description": "${role_uma_authorization}",
         "composite": false,
         "clientRole": false,
-        "containerId": "test-realm",
+        "containerId": "Greenfield",
         "attributes": {}
       }
     ],
@@ -436,7 +436,7 @@
       "clientId": "account",
       "name": "${client_account}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/test-realm/account/",
+      "baseUrl": "/realms/Greenfield/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
@@ -447,7 +447,7 @@
         "manage-account"
       ],
       "redirectUris": [
-        "/realms/test-realm/account/*"
+        "/realms/Greenfield/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -483,14 +483,14 @@
       "clientId": "account-console",
       "name": "${client_account-console}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/test-realm/account/",
+      "baseUrl": "/realms/Greenfield/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "/realms/test-realm/account/*"
+        "/realms/Greenfield/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -702,14 +702,14 @@
       "clientId": "security-admin-console",
       "name": "${client_security-admin-console}",
       "rootUrl": "${authAdminUrl}",
-      "baseUrl": "/admin/test-realm/console/",
+      "baseUrl": "/admin/Greenfield/console/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "/admin/test-realm/console/*"
+        "/admin/Greenfield/console/*"
       ],
       "webOrigins": [
         "+"

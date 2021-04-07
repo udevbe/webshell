@@ -1,5 +1,5 @@
 {
-  "realm": "test-realm",
+  "realm": "Greenfield",
   "auth-server-url": "http://localhost:8080/auth/",
   "url": "http://localhost:8080/auth/",
   "ssl-required": "external",
