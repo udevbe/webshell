@@ -15,11 +15,13 @@ A simple webshell implementation of the [Greenfield cloud compositor](https://gi
 # Run the whole thing in docker
 - Make sure you completed the build step first.
 - In the `docker` directory run `docker-compose up`.
-- Go to `http://localhost`
 
-Login credentials are:
-- username: `test`
-- password: `test`
+Webshell uses Keycloak to handle auth. In order to login you need to add a new user.
+
+- Go to `http://localhost:8080` and go to the administration console. You can login with username: `admin` and password: `admin`.
+- Add a user. In the left menu, click `Users` and add a new user with a username. Go to the tab `Credentials` and set the user password, make sure to uncheck `Temporary`.
+- Go to `http://localhost` and login with your new user.
+
 
 # Configuring available apps:
 - Adjust `/public/apps.json` to change the launch id, name & icon location of apps displayed in the webshell.
