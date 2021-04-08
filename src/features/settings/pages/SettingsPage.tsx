@@ -63,6 +63,7 @@ export const SettingsPage: FunctionComponent = () => {
           <IconButton onClick={goBack}>
             <ArrowBackIcon />
           </IconButton>
+          <Typography>Settings</Typography>
         </>
       }
     >

@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks'
 import { Launcher } from '../../remote-apps/components/Launcher'
 import { selectAppByClientId } from '../../remote-apps/remoteAppsSlice'
 import { ActiveClientMenu } from '../components/ActiveClientMenu'
-import { FileUpload } from '../components/FileUpload'
 import { UserMenu } from '../components/UserMenu'
 import { forceSceneRedraw, scene, selectActiveClient } from '../compositorSlice'
 
@@ -58,7 +57,6 @@ export const CompositorPage: FunctionComponent = () => {
     <Page
       header={
         <>
-          <FileUpload />
           <Box
             mt={0.25}
             mr={2}

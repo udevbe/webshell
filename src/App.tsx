@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { store } from './app/store'
 import { LoginPage } from './features/auth/pages/LoginPage'
 import { CompositorPage } from './features/compositor/pages/CompositorPage'
+import { FileManagerPage } from './features/file-manager/pages/FileManagerPage'
 import { SettingsPage } from './features/settings/pages/SettingsPage'
 import keycloak from './keycloak'
 import { PrivateRoute } from './PrivateRoute'
@@ -50,6 +51,7 @@ const Pages: FunctionComponent = () => {
     <Switch>
       <Route exact path='/login' component={LoginPage} />
       <PrivateRoute exact path='/' component={CompositorPage} />
+      <PrivateRoute exact path='/files' component={FileManagerPage} />
       <PrivateRoute exact path='/settings' component={SettingsPage} />
       <Route path='*' component={NotFount} />
     </Switch>

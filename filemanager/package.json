@@ -1,0 +1,15 @@
+{
+  "name": "filemanager",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@opuscapita/filemanager-server": "^1.1.4",
+    "compression": "^1.7.4",
+    "express": "^4.17.1"
+  }
+}
