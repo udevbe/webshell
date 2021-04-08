@@ -17,12 +17,26 @@ services:
       dockerfile: ./Dockerfile
     read_only: true
     volumes:
-      - upload:/home/node/upload:ro
+      - files:/home/node/files:rw
       - tmp:/tmp
     ports:
       - 8081:8081
     environment:
       HOME: '/home/node'
+  filemanager:
+    image: udevbe/webshell.file-manager
+    build:
+      context: ../filemanager
+      dockerfile: ../docker/filemanager/Dockerfile
+    read_only: true
+    volumes:
+      - files:/files:rw
+    ports:
+      - 3020:3020
+    environment:
+      FS_ROOT: '/files'
+      PORT: 3020
+      HOST: '0.0.0.0'
   nginx:
     image: udevbe/webshell.nginx
     build:
@@ -30,11 +44,9 @@ services:
       dockerfile: ./docker/nginx/Dockerfile
     ports:
       - 80:80
-    volumes:
-      - upload:/upload:rw
 
 volumes:
-  upload:
+  files:
     driver_opts:
       type: tmpfs
       device: tmpfs

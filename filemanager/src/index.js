@@ -1,5 +1,5 @@
-let config = {
-  fsRoot: __dirname,
+const config = {
+  fsRoot: process.env.FS_ROOT || __dirname,
   rootName: 'Root folder',
   port: process.env.PORT || '3020',
   host: process.env.HOST || 'localhost',
