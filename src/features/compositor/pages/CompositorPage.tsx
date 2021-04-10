@@ -57,18 +57,7 @@ export const CompositorPage: FunctionComponent = () => {
     <Page
       header={
         <>
-          <Box
-            mt={0.25}
-            mr={2}
-            pr={1}
-            pl={1}
-            width={186}
-            height={48}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
+          <Box mt={0.25} mr={2} pr={1} pl={1} width={186} height={48} display='flex' alignItems='center'>
             {activeApp ? (
               <ActiveClientMenu activeApp={activeApp} />
             ) : (
@@ -77,25 +66,8 @@ export const CompositorPage: FunctionComponent = () => {
               </Typography>
             )}
           </Box>
-          <Box
-            mr={4}
-            display='flex'
-            flex={1}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          />
-          <Box
-            mt={0.25}
-            pr={1}
-            pl={1}
-            height={48}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
+          <Box mr={4} display='flex' flex={1} alignItems='center' />
+          <Box mt={0.25} pr={1} pl={1} height={48} display='flex' alignItems='center'>
             <UserMenu />
             <Launcher anchorElRef={sceneParent} />
           </Box>

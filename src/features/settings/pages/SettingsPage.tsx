@@ -69,13 +69,14 @@ export const SettingsPage: FunctionComponent = () => {
     >
       {loading ? null : (
         <List>
+          <div className={classes.spacer} />
           <ListItem>
             <ListItemIcon>
               <Keyboard />
             </ListItemIcon>
             <ListItemText primary='Keyboard' />
           </ListItem>
-          <Divider variant='fullWidth' />
+          <Divider variant='middle' />
           <ListItem>
             <Autocomplete
               id='keyboard-layout'
@@ -84,7 +85,8 @@ export const SettingsPage: FunctionComponent = () => {
               getOptionLabel={(nrmlvo) => nrmlvo.name}
               value={nrmlvo}
               inputValue={nrmlvo?.name}
-              style={{ width: '100%' }}
+              autoHighlight
+              fullWidth
               onChange={(_, value) => setLayout(value)}
               renderInput={(params) => <TextField {...params} label='Layout' variant='standard' fullWidth />}
             />
@@ -97,21 +99,13 @@ export const SettingsPage: FunctionComponent = () => {
             </ListItemIcon>
             <ListItemText primary='Mouse' />
           </ListItem>
-          <Divider variant='fullWidth' />
-          <ListItem
-            style={{
-              paddingBottom: 0,
-            }}
-          >
+          <Divider variant='middle' />
+          <ListItem>
             <Typography id='scroll-speed-slider' gutterBottom={false} variant='caption' color='textSecondary'>
               Scroll Speed
             </Typography>
           </ListItem>
-          <ListItem
-            style={{
-              paddingTop: 0,
-            }}
-          >
+          <ListItem>
             <Slider
               min={1}
               max={300}
@@ -124,7 +118,6 @@ export const SettingsPage: FunctionComponent = () => {
               onChangeCommitted={() => handleScrollSpeedCommit()}
             />
           </ListItem>
-          <div className={classes.spacer} />
         </List>
       )}
     </Page>
