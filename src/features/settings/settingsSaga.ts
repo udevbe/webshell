@@ -23,7 +23,7 @@ function* done() {
   yield put(settingsDone())
 }
 
-export function* settingsSaga(session: CompositorSession) {
+export function* settingsSaga(session: CompositorSession): any {
   yield fork(watchConfigureKeymap, session)
   yield call(initKeymaps, session)
   yield call(done)
