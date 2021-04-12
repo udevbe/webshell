@@ -63,7 +63,7 @@ function* fetchJSONApps() {
   yield put(markAppsReady())
 }
 
-export function* remoteAppsSaga(compositorSession: CompositorSession): Generator<StrictEffect, void, void> {
+export function* remoteAppsSaga(compositorSession: CompositorSession): any {
   yield fork(fetchJSONApps)
   yield fork(initLauncher, compositorSession)
 }
