@@ -1,5 +1,5 @@
 import { call, fork, put, select, takeLatest } from 'redux-saga/effects'
-import { CompositorSession, nrmlvo } from '../../../../greenfield/compositor-module'
+import { CompositorSession, nrmlvo } from 'greenfield-compositor'
 import { PayloadActionFromCreator } from '../type-utils'
 import { configureKeymap, selectActiveKeymap, setKeymaps, settingsDone } from './settingsSlice'
 

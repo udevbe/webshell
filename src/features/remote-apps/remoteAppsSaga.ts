@@ -7,7 +7,7 @@ import {
 } from 'greenfield-compositor'
 import type { Client } from 'westfield-runtime-server'
 import RemoteAppLauncher from 'greenfield-compositor/types/RemoteAppLauncher'
-import { call, fork, put, select, StrictEffect, takeEvery } from 'redux-saga/effects'
+import { call, fork, put, select, takeEvery } from 'redux-saga/effects'
 import { PayloadActionFromCreator } from '../type-utils'
 import {
   addApps,
