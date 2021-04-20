@@ -1,6 +1,7 @@
 import { Box, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core'
 import IconButton from '@material-ui/core/IconButton'
 import { makeStyles } from '@material-ui/core/styles'
+import { Folder } from '@material-ui/icons'
 import HomeIcon from '@material-ui/icons/Home'
 import MenuIcon from '@material-ui/icons/Menu'
 import SettingsIcon from '@material-ui/icons/Settings'
@@ -10,6 +11,7 @@ import Logo from './Logo'
 
 const drawerEntries = [
   { name: 'Home', icon: <HomeIcon />, pagePath: '/' } as const,
+  { name: 'Files', icon: <Folder />, pagePath: './files' } as const,
   { name: 'Settings', icon: <SettingsIcon />, pagePath: '/settings' } as const,
 ] as const
 

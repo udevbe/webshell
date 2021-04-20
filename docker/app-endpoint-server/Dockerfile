@@ -1,4 +1,5 @@
 FROM udevbe/app-endpoint-server:debian-unstable
+ENV NODE_ENV=production
 
 RUN apt-get update && apt-get install -y \
     gtk-3-examples \
