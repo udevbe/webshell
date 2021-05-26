@@ -1,10 +1,10 @@
 {
-  "realm": "Greenfield",
-  "auth-server-url": "http://localhost:8080/auth/",
-  "url": "http://localhost:8080/auth/",
-  "ssl-required": "external",
-  "resource": "greenfield",
-  "clientId": "greenfield",
+  "realm": "greenfield",
+  "auth-server-url": "http://test.udev.be/auth/",
+  "url": "http://test.udev.be/auth/",
+  "ssl-required": "none",
+  "resource": "webshell",
+  "clientId": "webshell",
   "public-client": true,
   "confidential-port": 0
 }

@@ -13,7 +13,7 @@ import { PrivateRoute } from './PrivateRoute'
 import { ReactKeycloakProvider, useKeycloak } from '@react-keycloak/web'
 
 const Pages: FunctionComponent = () => {
-  const { initialized } = useKeycloak()
+  const { initialized, keycloak } = useKeycloak()
 
   // FIXME check keycloak init errors
   if (!initialized) {

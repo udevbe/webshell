@@ -1,9 +1,9 @@
 import { CircularProgress, Container, Grid, IconButton, makeStyles, Menu } from '@material-ui/core'
 import type { FunctionComponent, RefObject } from 'react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AppsIcon from '@material-ui/icons/Apps'
-import { useAppSelector } from '../../../app/hooks'
-import { selectAllApps, selectAppDisoveryLoading } from '../remoteAppsSlice'
+import { useAppDispatch, useAppSelector } from '../../../app/hooks'
+import { refreshApps, selectAllApps, selectAppDisoveryLoading } from '../remoteAppsSlice'
 import { ApplicationLauncherTile } from './ApplicationLauncherTile'
 
 const useStyles = makeStyles(() => ({
@@ -24,10 +24,20 @@ export const Launcher: FunctionComponent<{
 }> = ({ anchorElRef }) => {
   const isLoading = useAppSelector(selectAppDisoveryLoading)
   const remoteApps = useAppSelector(selectAllApps)
+  const dispatch = useAppDispatch()
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const handleClick = () => setAnchorEl(anchorElRef.current)
   const handleClose = () => setAnchorEl(null)
+
+  const open = Boolean(anchorEl)
+
+  useEffect(() => {
+    if (open) {
+      dispatch(refreshApps())
+    }
+  }, [open])
+
   const classes = useStyles()
   return (
     <>
@@ -43,7 +53,7 @@ export const Launcher: FunctionComponent<{
           horizontal: 'right',
         }}
         keepMounted
-        open={Boolean(anchorEl)}
+        open={open}
         onClose={handleClose}
         classes={{
           paper: classes.menuPaper,

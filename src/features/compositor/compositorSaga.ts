@@ -180,6 +180,7 @@ function* done(session: CompositorSession) {
 export function* compositorSaga(): any {
   yield call(initWasm)
   const session: CompositorSession = yield call(createCompositorSession)
+  yield setContext({ session })
   yield fork(remoteAppsSaga, session)
   yield fork(settingsSaga, session)
   yield fork(watchAllEvents, session)

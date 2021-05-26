@@ -52,8 +52,15 @@
       },
       'remote-kwrite': {
         bin: "/usr/bin/kwrite",
-        args: ['-platform','wayland'],
+        args: [
+          '-platform',
+          'wayland'
+        ],
       },
+      'remote-weston-terminal': {
+        bin: "/usr/bin/weston-terminal",
+        args: [],
+      }
     }
   }
 }

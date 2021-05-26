@@ -1,0 +1,176 @@
+# TODO get schema from remote endpoint during build
+openapi: 3.0.3
+info:
+  title: Application Broker API
+  description: Application Broker API
+  version: 1.0.0
+
+servers:
+  - url: 'https://greenfield.app'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    UnauthorizedError:
+      description: You have called this API with incorrect credentials, verify your JWT token
+      content:
+        text/plain:
+          schema:
+            type: string
+
+security:
+  - bearerAuth: [ ]
+
+paths:
+  /applications:
+    get:
+      summary: Retrieve list of all applications
+      operationId: getApplications
+      tags:
+        - application
+      responses:
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        200:
+          description: Returns the list of application
+          content:
+            application/json:
+              schema:
+                description: The application response
+                type: object
+                additionalProperties: false
+                properties:
+                  applications:
+                    description: A list of all applications
+                    type: array
+                    items:
+                      description: One application
+                      type: object
+                      additionalProperties: false
+                      properties:
+                        name:
+                          type: string
+                          description: The internal codename of the application
+                        icon:
+                          type: string
+                          description: url to the icon
+                          format: uri
+                        friendlyname:
+                          type: string
+                          description: The name visible to the user
+                      required:
+                        - name
+                        - icon
+                        - friendlyname
+                required:
+                  - applications
+
+  /application/{applicationname}/instances:
+    post:
+      summary: start a new application instance
+      operationId: postApplicationInstances
+      tags:
+        - application
+      parameters:
+        - name: applicationname
+          in: path
+          description: The code name of the application to start
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                compositorid:
+                  type: string
+                  description: The id of the compositor
+              required:
+                - compositorid
+      responses:
+        400:
+          description: The request body was invalid
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        201:
+          description: Successfully created the instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID of the created appliction instane
+                required:
+                  - id
+
+  /applications/instance/{instanceid}:
+    delete:
+      summary: Delete the application instance and kill the running application
+      operationId: deleteApplicationInstance
+      tags:
+        - application
+      parameters:
+        - name: instanceid
+          in: path
+          description: The id of the instance you want to terminate
+          required: true
+          schema:
+            type: string
+      responses:
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: The instance was not found
+        202:
+          description: Application instance deletion started
+    get:
+      summary: retrieve information about an instance
+      operationId: getApplicationInstance
+      tags:
+        - application
+      parameters:
+        - name: instanceid
+          in: path
+          description: The id of the instance you want information about
+          required: true
+          schema:
+            type: string
+      responses:
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: The instance was not found
+        200:
+          description: Information about the instance
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                description: instance details
+                properties:
+                  websocketurl:
+                    type: string
+                    format: uri
+                    description: The websocket url to access this instance
+                  phase:
+                    type: string
+                    description: The status for this instance
+                    enum:
+                      - Pending
+                      - Running
+                      - Succeeded
+                      - Failed
+                      - Unknown
+                required:
+                  - phase

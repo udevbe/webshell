@@ -4,6 +4,7 @@ ENV NODE_ENV=production
 RUN apt-get update && apt-get install -y \
     gtk-3-examples \
     kwrite \
+    weston \
     && rm -rf /var/lib/apt/lists/*
 
 COPY config.json5 /usr/src/app

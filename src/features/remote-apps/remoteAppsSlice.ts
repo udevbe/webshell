@@ -54,24 +54,23 @@ export const remoteAppsSlice = createSlice({
   },
 })
 
-export const {
-  addApps,
-  markAppsReady,
-  appStopped,
-  appLaunchBusy,
-  appLaunchSuccess,
-  appLaunchFailed,
-} = remoteAppsSlice.actions
+export const { addApps, markAppsReady, appStopped, appLaunchBusy, appLaunchSuccess, appLaunchFailed } =
+  remoteAppsSlice.actions
 
 export const appLaunch = createAction<{ app: RemoteApp }, 'launcher/appLaunch'>('launcher/appLaunch')
+export const refreshApps = createAction('launcher/refreshApps')
 
 export const selectLastFailedLaunch = (state: RootState) => state.remoteApps.lastFailedLaunch
 export const selectLastSuccessLaunch = (state: RootState) => state.remoteApps.lastSuccessLaunch
 export const selectBusyAppLaunches = (state: RootState) => state.remoteApps.busyLaunches
-export const selectAppByClientId = (clientId: string | undefined) => (state: RootState): RemoteApp | undefined =>
-  state.remoteApps.apps.find((app) => (clientId ? app.clientId === clientId : false))
-export const selectAppByAppId = (appId: string | undefined) => (state: RootState): RemoteApp | undefined =>
-  state.remoteApps.apps.find((app) => (appId ? app.id === appId : false))
+export const selectAppByClientId =
+  (clientId: string | undefined) =>
+  (state: RootState): RemoteApp | undefined =>
+    state.remoteApps.apps.find((app) => (clientId ? app.clientId === clientId : false))
+export const selectAppByAppId =
+  (appId: string | undefined) =>
+  (state: RootState): RemoteApp | undefined =>
+    state.remoteApps.apps.find((app) => (appId ? app.id === appId : false))
 export const selectAllApps = (state: RootState): RemoteApp[] => state.remoteApps.apps
 export const selectAppDisoveryLoading = (state: RootState): boolean => state.remoteApps.appsLoading
 

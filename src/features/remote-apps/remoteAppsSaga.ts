@@ -1,13 +1,19 @@
 import {
-  CompositorRemoteAppLauncher,
   CompositorRemoteSocket,
   CompositorSession,
-  createCompositorRemoteAppLauncher,
+  createCompositorProxyConnector,
   createCompositorRemoteSocket,
 } from 'greenfield-compositor'
+import type RemoteAppLauncher from 'greenfield-compositor/types/RemoteAppLauncher'
 import type { Client } from 'westfield-runtime-server'
-import RemoteAppLauncher from 'greenfield-compositor/types/RemoteAppLauncher'
-import { call, fork, put, select, takeEvery } from 'redux-saga/effects'
+import { call, delay, fork, getContext, put, select, takeEvery, takeLatest } from 'redux-saga/effects'
+import { application } from '../../api'
+import {
+  InlineResponse200,
+  InlineResponse2001,
+  InlineResponse2001PhaseEnum,
+  InlineResponse201,
+} from '../../api/application'
 import { PayloadActionFromCreator } from '../type-utils'
 import {
   addApps,
@@ -17,14 +23,12 @@ import {
   appLaunchSuccess,
   appStopped,
   markAppsReady,
+  refreshApps,
   selectBusyAppLaunches,
 } from './remoteAppsSlice'
 import { RemoteApp } from './types'
 
-function* handleAppLaunch(
-  remoteAppLauncher: CompositorRemoteAppLauncher,
-  action: PayloadActionFromCreator<typeof appLaunch>,
-) {
+function* handleAppLaunch(remoteAppLauncher: RemoteAppLauncher, action: PayloadActionFromCreator<typeof appLaunch>) {
   const app = action.payload.app
 
   // make sure we don't launch an app multiple times
@@ -34,9 +38,33 @@ function* handleAppLaunch(
   }
 
   yield put(appLaunchBusy({ app }))
-  const { url, id } = app
+  const session: CompositorSession = yield getContext('session')
+
+  const instance: InlineResponse201 = yield call([application, application.postApplicationInstances], {
+    applicationname: app.id,
+    inlineObject: {
+      compositorid: session.compositorSessionId,
+    },
+  })
+
+  let appInstance: InlineResponse2001
+  do {
+    appInstance = yield call([application, application.getApplicationInstance], { instanceid: instance.id })
+    yield delay(500)
+  } while (appInstance.phase === InlineResponse2001PhaseEnum.Pending)
+
+  if (appInstance.phase !== InlineResponse2001PhaseEnum.Running || appInstance.websocketurl === undefined) {
+    // TODO notify app launch failure
+    console.error('failed to launch app.')
+    return
+  }
+
   try {
-    const client: Client = yield call([remoteAppLauncher, remoteAppLauncher.launch], new URL(url), id)
+    const websocketProtocol = location.protocol === 'https:' ? 'wss' : 'ws'
+    const url = new URL(`${websocketProtocol}://${appInstance.websocketurl}`)
+    url.searchParams.append('compositorSessionId', session.compositorSessionId)
+
+    const client: Client = yield call([remoteAppLauncher, remoteAppLauncher.connectTo], url)
     yield put(appLaunchSuccess({ app, client: { id: client.id } }))
     yield call([client, client.onClose])
     yield put(appStopped({ app }))
@@ -48,7 +76,7 @@ function* handleAppLaunch(
 function* initLauncher(compositorSession: CompositorSession) {
   const remoteSocket: CompositorRemoteSocket = yield call(createCompositorRemoteSocket, compositorSession)
   const remoteAppLauncher: RemoteAppLauncher = yield call(
-    createCompositorRemoteAppLauncher,
+    createCompositorProxyConnector,
     compositorSession,
     remoteSocket,
   )
@@ -57,13 +85,23 @@ function* initLauncher(compositorSession: CompositorSession) {
 }
 
 function* fetchJSONApps() {
-  const remoteAppsResponse: Response = yield call(fetch, 'apps.json')
-  const apps: RemoteApp[] = yield call([remoteAppsResponse, 'json'])
+  const { applications }: InlineResponse200 = yield call([application, application.getApplications])
+  const apps: RemoteApp[] = applications.map((application) => {
+    return {
+      id: application.name,
+      title: application.friendlyname,
+      icon: application.icon,
+    }
+  })
+
   yield put(addApps({ apps }))
   yield put(markAppsReady())
 }
 
-export function* remoteAppsSaga(compositorSession: CompositorSession): any {
-  yield fork(fetchJSONApps)
+function* watchRefreshAppsRequest() {
+  yield takeLatest(refreshApps, fetchJSONApps)
+}
+export function* remoteAppsSaga(compositorSession: CompositorSession) {
+  yield fork(watchRefreshAppsRequest)
   yield fork(initLauncher, compositorSession)
 }
